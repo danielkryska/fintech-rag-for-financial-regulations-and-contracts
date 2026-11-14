@@ -6,6 +6,15 @@ This project explores what it actually takes to run retrieval-augmented generati
 
 The repository covers the full path from document ingestion to a governed answer: OCR and parsing, adaptive chunking, hybrid retrieval with permission-aware filtering, grounded generation with inline citations, evaluation discipline, and the compliance, latency, and cost controls that separate a demo from a system a bank could operate. It is intended to demonstrate RAG at production depth (not toy depth), large-file handling, evaluation discipline, compliance thinking, and reasoning about QPS and cost in AI systems.
 
+## Repository layout
+
+```
+├── src/     # Application code: ingestion, retrieval, generation, evaluation
+├── infra/   # Infrastructure as code for the Azure, AWS, and Kubernetes targets
+├── ADR/     # Architecture Decision Records
+└── LICENSE  # MIT
+```
+
 ## Requirements
 
 Requirements are described at a business and system level. Concrete libraries and cloud services are deliberately left to the architecture sections.
@@ -103,3 +112,7 @@ _Architecture diagram and flow: to be added._
 ## Showcase
 
 _To be added: demo video or GIF, screenshots of the assistant with inline citations, a sample insufficient-context response, the evaluation dashboard, and benchmark results for latency, retrieval quality, and cost._
+
+## License
+
+Released under the [MIT License](LICENSE).
