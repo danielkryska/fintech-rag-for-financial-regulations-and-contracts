@@ -1,16 +1,49 @@
 # Architecture Decision Records
 
-This folder holds the Architecture Decision Records (ADRs) for the project. Each ADR captures a single significant decision, the context that forced it, and the consequences accepted with it.
+The list of high-level architecture decisions for this project. Each ADR records one platform-agnostic decision, the options considered, the well-architected trade-offs, and the consequences accepted.
 
-## Convention
-
-- One decision per file, numbered sequentially: `0001-short-title.md`.
-- Statuses: `Proposed`, `Accepted`, `Superseded`, `Deprecated`.
-- Once accepted, an ADR is immutable. A later decision that changes it is recorded in a new ADR that supersedes the old one.
-- Start from [template.md](template.md).
+ADRs are for decisions that change the flow or create lasting commitment: retrieval architecture, grounding and citation model, tenancy and permissions, audit, evaluation, deployment topology class, a major library class, a SaaS category. Implementation detail and specific cloud service choices belong in [ARCHITECTURE/](../ARCHITECTURE/README.md) and C4 Level 3 diagrams, not here.
 
 ## Index
 
-| ADR | Title | Status |
-| --- | --- | --- |
-| _none yet_ | | |
+| ADR | Decision | Scope | Status | Date |
+| --- | --- | --- | --- | --- |
+
+_No decisions yet. Run `/create-adr` to start._
+
+## Conventions
+
+- Create ADRs only through `/create-adr`. Do not write or edit an ADR directly.
+- One decision per file: `NNNN-short-kebab-title.md`.
+- Numbers are sequential, four digits, and never reused. The command takes the highest existing number plus one.
+- Status values: `Proposed`, `Accepted`, `Superseded by ADR-NNNN`, `Deprecated`.
+- High-level ADRs use `Scope: Cross-cutting`. Platform-specific service choices are recorded in the target architecture and C4 Level 3 diagrams, not as high-level ADRs.
+- Accepted ADRs are immutable. Reverse or change a decision with a new ADR that supersedes the old one.
+- Reference requirement IDs from [REQUIREMENTS.md](../REQUIREMENTS.md).
+- Every ADR includes a `## Well-architected assessment` covering operational excellence, security, reliability, performance efficiency, cost optimization, and sustainability, plus a `## Simplification check`. Mark a pillar `N/A` with a reason; do not omit it.
+- Material gaps found during the assessment become follow-ups with a severity and owner.
+- The ADR template lives in [.claude/commands/create-adr.md](../.claude/commands/create-adr.md). There is deliberately no separate template file.
+- The command updates this index and the decision register in [ARCHITECTURE.md](../ARCHITECTURE.md) in the same change that adds an ADR.
+
+## Drawings
+
+High-level, system-wide ADRs include a draw.io diagram, either:
+
+- inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or
+- as a sidecar file `NNNN-<drawing-name>.xml`, linked from the ADR.
+
+The rendered image is `NNNN-<drawing-name>.png` in this folder, embedded in the ADR. Never commit a PNG without its XML source or claim a render that does not exist.
+
+C4 Level 3 component diagrams are platform-specific. They live in `ARCHITECTURE/<platform>/` and are produced by the platform architect, not by `/create-adr`.
+
+## Who owns ADRs
+
+- `/create-adr` — creates high-level, platform-agnostic ADRs and runs the full create → review → fix loop.
+- `adr-reviewer` — read-only review, invoked by the command at every round.
+- `architect-aws`, `architect-azure`, `architect-k8s` — platform advice and C4 Level 3 diagrams. They do not create or edit high-level ADRs.
+
+The platform architects also advise: they review the current design against their platform well-architected framework, find gaps, propose simplifications, and assess security, cost, reliability, operations, performance, and sustainability. Findings that require a high-level choice are routed back to `/create-adr`; the rest become follow-ups.
+
+## Review gate
+
+`/create-adr` loops with `adr-reviewer` until no **Blocking** or **Major** findings remain. Minor findings can be fixed, recorded as follow-ups, or waived by the user. Only then does the command ask for acceptance; the status becomes `Accepted` only with explicit user approval.
