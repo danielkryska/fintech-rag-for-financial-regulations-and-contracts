@@ -7,7 +7,7 @@ argument-hint: "[decision topic] (optional)"
 
 You facilitate one high-level, platform-agnostic Architecture Decision Record. You own the whole chain: **create → review → fix → re-review**. Frame the decision, interview, present options, write the ADR, run the reviewer, ask which findings to fix, apply them, re-review, and accept only when the user explicitly approves.
 
-This command does **not** choose AWS, Azure, or Kubernetes services. Platform architects (`architect-aws`, `architect-azure`, `architect-k8s`) are used after the ADR is accepted, mainly for C4 Level 3 diagrams.
+This command does **not** choose AWS, Azure, or Kubernetes services. After the ADR is accepted, `/create-c4` owns the C4 Levels 1 and 2 drawings, and the platform architects (`architect-aws`, `architect-azure`, `architect-k8s`) produce the Level 3 drawings.
 
 ## 1. Read first
 
@@ -15,6 +15,7 @@ This command does **not** choose AWS, Azure, or Kubernetes services. Platform ar
 - `ARCHITECTURE.md`
 - `ADR/README.md`
 - Every `ADR/NNNN-*.md`
+- `c4-architecture/README.md` — the C4 index, for linking or naming an existing drawing.
 
 If these disagree, existing ADRs win. Report the conflict before writing anything.
 
@@ -29,7 +30,7 @@ Stop and route elsewhere if the request is platform-specific:
 - "Which managed vector database vendor?"
 - Any request to choose a specific cloud SKU, region, or service.
 
-Say: "This is platform-specific. `/create-adr` records high-level decisions; use the relevant platform architect for platform advice and C4 Level 3 diagrams." Do not invoke a platform architect from this command.
+Say: "This is platform-specific. `/create-adr` records high-level decisions; use `/create-c4` for Levels 1 and 2 and the relevant platform architect for platform advice and Level 3 drawings." Do not invoke a platform architect or `/create-c4` from this command.
 
 ## 3. Interview
 
@@ -62,7 +63,7 @@ In the same change:
 
 - Add the row to `ADR/README.md`.
 - Add the row to the `ARCHITECTURE.md` decision register.
-- If the decision changes a target design, note that the platform architect must update the target README and its C4 Level 3 diagrams after acceptance.
+- If the decision changes the architecture, note that `/create-c4` must update the affected C4 Levels 1 and 2 after acceptance, and that the matching platform architect must then update the Level 3 drawings.
 
 ## 6. Review/fix loop
 
@@ -86,14 +87,14 @@ Ask the user to accept. Only with explicit approval:
 
 If the user declines, leave the ADR `Proposed` and report what remains.
 
-## 8. Hand off to platform architects
+## 8. Hand off to C4
 
-After acceptance, if the decision changes a platform design, use the relevant platform architect for:
+After acceptance, if the decision changes the architecture:
 
-- A platform advisory review against its well-architected framework.
-- C4 Level 3 component diagrams in `ARCHITECTURE/<platform>/`.
+- Run `/create-c4` for the affected Level 1 or Level 2 drawing. It owns the draw.io standard, validator, `c4-reviewer` loop, and user confirmation gate.
+- After Levels 1 and 2 are confirmed, `/create-c4` invokes the matching platform architect (`architect-aws`, `architect-azure`, or `architect-k8s`) for the Level 3 drawing in `c4-architecture/` and a platform advisory review.
 
-They do not rewrite the ADR. If they find a conflict, they report it and the user runs `/create-adr` again for a superseding decision.
+The platform architects do not rewrite the ADR. If they find a conflict, they report it and the user runs `/create-adr` again for a superseding decision.
 
 ## ADR template (canonical)
 
@@ -155,7 +156,7 @@ Material gaps found during this assessment are recorded in Consequences → Foll
 
 ## Diagram
 
-For system-wide decisions only. Include inline draw.io XML in a fenced `xml` block, or link `NNNN-<drawing-name>.xml`; embed `NNNN-<drawing-name>.png`.
+For a system-wide decision, link the confirmed C4 drawing in `c4-architecture/` once `/create-c4` has produced it (for example `lvl2_v1_query_answering.xml`). If no C4 drawing exists yet, name the Level 1 or Level 2 drawing that `/create-c4` must create. Do not embed C4 XML in the ADR. A non-C4 decision sketch may be inline draw.io XML in a fenced `xml` block or a sidecar `NNNN-<drawing-name>.xml`; include `NNNN-<drawing-name>.png` only when it exists.
 ```
 
 ## Output
@@ -165,4 +166,4 @@ Return:
 1. ADR path and final status.
 2. Review loop summary: rounds run, findings raised, findings fixed, findings waived or deferred.
 3. Remaining findings, if any, with severity.
-4. The next step: a platform architect for C4 Level 3 diagrams, another ADR, or no action.
+4. The next step: `/create-c4` for the affected Level 1 or Level 2 drawing, a platform architect for Level 3, another ADR, or no action.

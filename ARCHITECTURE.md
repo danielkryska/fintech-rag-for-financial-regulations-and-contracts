@@ -8,7 +8,7 @@ System-wide architecture overview for the Fintech RAG showcase. **ADRs are the s
 | --- | --- |
 | [REQUIREMENTS.md](REQUIREMENTS.md) | What the system must do; checked only when implemented and verified. |
 | [ADR/README.md](ADR/README.md) | Index of architecture decisions, one per file. |
-| [ARCHITECTURE/](ARCHITECTURE/README.md) | Drawings and per-target detail: AWS, Azure, Kubernetes, process models, low-level designs. |
+| [c4-architecture/](c4-architecture/README.md) | C4 drawings and business flows (draw.io XML), the drawing standard, the index, and Level 3 platform realisations. |
 | [infra/README.md](infra/README.md) | Infrastructure-as-code layout. |
 | [src/README.md](src/README.md) | Application layout. |
 
@@ -16,11 +16,7 @@ System-wide architecture overview for the Fintech RAG showcase. **ADRs are the s
 
 A governed retrieval-augmented generation pipeline. Documents are ingested, parsed with OCR fallback, redacted, chunked, and indexed with permission metadata. Questions are redacted, retrieved with hybrid search, permission-filtered, reranked, and answered with inline citations or an explicit insufficient-context response. Every interaction is audited and feeds evaluation. The required behavior and quality gates are in [REQUIREMENTS.md](REQUIREMENTS.md).
 
-The system must be deployable on three targets:
-
-- **AWS** — [ARCHITECTURE/aws/](ARCHITECTURE/aws/README.md)
-- **Azure** — [ARCHITECTURE/azure/](ARCHITECTURE/azure/README.md)
-- **Kubernetes / portable** — [ARCHITECTURE/k8s/](ARCHITECTURE/k8s/README.md)
+The system must be deployable on three targets: AWS, Azure, and Kubernetes / portable. The platform-specific realisations will be recorded as C4 Level 3 drawings in [c4-architecture/](c4-architecture/README.md), named `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.xml` and produced by the matching platform architect after Levels 1 and 2 are confirmed.
 
 ## Architectural constraints
 
@@ -50,7 +46,7 @@ Every target is reviewed against its platform framework: the **AWS Well-Architec
 
 AWS treats all six as framework pillars. Azure treats the first five as framework pillars and sustainability as an additional design consideration. The Kubernetes target adapts all six to cloud-native practice.
 
-The platform architects advise on their target. They review existing designs, find architecture gaps, propose simplifications, and assess security, reliability, cost, operations, performance, and sustainability. They do not create or edit high-level ADRs; `/create-adr` owns those. Every ADR records a pillar-by-pillar impact assessment and a simplification check. `adr-reviewer` checks coverage before acceptance, and `/documentation` checks it across the ADR set.
+The platform architects advise on their target. They review existing designs, find architecture gaps, propose simplifications, and assess security, reliability, cost, operations, performance, and sustainability. They do not create or edit high-level ADRs; `/create-adr` owns those. Every ADR records a pillar-by-pillar impact assessment and a simplification check. `adr-reviewer` checks coverage before acceptance, `c4-reviewer` checks the C4 drawings, and `/documentation` checks the documents and indexes across the set.
 
 ## Decision register
 
@@ -63,7 +59,7 @@ _No decisions yet. Run `/create-adr` to start._
 
 ## Open decisions
 
-Tracked but not yet decided. Each high-level decision is resolved through `/create-adr`; a working preference is not a decision. Platform architects are used after the high-level ADR for C4 Level 3 diagrams and platform advice.
+Tracked but not yet decided. Each high-level decision is resolved through `/create-adr`; a working preference is not a decision. C4 Levels 1 and 2 are drawn with `/create-c4`; Level 3 is drawn by the platform architects after the high-level ADRs and Levels 1 and 2 are confirmed.
 
 | Area | Targets | Owner | Status |
 | --- | --- | --- | --- |
@@ -79,21 +75,22 @@ Tracked but not yet decided. Each high-level decision is resolved through `/crea
 
 ## Process models
 
-End-to-end flows are in [ARCHITECTURE/process-level-modeling/](ARCHITECTURE/process-level-modeling/README.md).
+End-to-end business flows will be expressed in the confirmed C4 Level 2 slice drawings in [c4-architecture/](c4-architecture/README.md). Each line is a step in the flow and each business block lists the actions it performs.
 
 ## Architecture views
 
-- C4 Level 1 (system context) and Level 2 (containers) are system-wide and are tied to the ADRs that explain them.
-- C4 Level 3 (components) is platform-specific. The platform architects produce these in `ARCHITECTURE/<platform>/` as `c4-l3-<container>-<name>.xml` plus `.png`.
+- All C4 drawings live in [c4-architecture/](c4-architecture/README.md) as draw.io XML. The standard, naming, index, and review gate are defined there.
+- C4 Level 1 (system context) and Level 2 (containers and business-flow slices) are system-wide and platform-agnostic. They are drawn by `/create-c4` and tied to the ADRs that explain them.
+- C4 Level 3 (platform realisation) is platform-specific. The matching platform architect draws it after Levels 1 and 2 are confirmed; `/create-c4` runs the validator, `c4-reviewer`, and the user confirmation gate. File naming is `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.xml`.
 - C4 Level 4 (code) is out of scope; the code documents itself.
 
 ## Changing the architecture
 
 1. Run `/create-adr` for the high-level decision. It interviews, presents options, writes the ADR, and runs the review/fix loop with `adr-reviewer`.
 2. Answer its questions and choose an option. The command asks which review findings to fix and repeats until no Blocking or Major findings remain.
-3. Accept explicitly; the command sets the status and syncs both indexes.
-4. If the decision changes a target design, use the matching platform architect (`architect-aws`, `architect-azure`, or `architect-k8s`) for platform advice and C4 Level 3 diagrams in `ARCHITECTURE/<platform>/`.
-5. Run `/documentation` to check every Markdown file for contradictions.
+3. Accept explicitly; the command sets the status and syncs the ADR index and decision register.
+4. If the decision changes the design, run `/create-c4` to revise the affected Level 1 or Level 2 drawing. After those are confirmed, `/create-c4` invokes the matching platform architect for the Level 3 realisation.
+5. Run `/documentation` to check every Markdown file, the ADR indexes, and the C4 index for contradictions.
 6. An accepted ADR is immutable; change it only through a superseding ADR created by `/create-adr`.
 
 If documents disagree, the ADR wins and the other document is corrected. If an ADR is wrong, stop and propose a superseding ADR.

@@ -1,0 +1,256 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="lvl1-system-context" name="L1 System context">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;C4 Level 1 - System context (v1, In review)&lt;/b&gt;&lt;br&gt;Date: 2026-11-15&lt;br&gt;Requirements: FR-01 to FR-08, NFR-01 to NFR-08&lt;br&gt;ADRs: none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=18;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1000" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;Solid thick border: own system (black box)&lt;br&gt;Dashed border: external system&lt;br&gt;Actor: person or role" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1120" width="450" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-records" value="Records administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-employee" value="Employee" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-compliance" value="Compliance officer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="500" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-reviewer" value="Reviewer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-access" value="Access-control owner" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="820" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-operator" value="Platform operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="980" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-ingestion" value="&lt;b&gt;Document ingestion and processing&lt;/b&gt;&lt;br&gt;Ingest, OCR, redact PII, chunk, index handoff" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;strokeWidth=3;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="220" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-retrieval" value="&lt;b&gt;Knowledge retrieval and answering&lt;/b&gt;&lt;br&gt;Permission-aware hybrid retrieval, rerank, grounded answer, citations, fallback" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;strokeWidth=3;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="540" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-governance" value="&lt;b&gt;Governance, audit, and evaluation&lt;/b&gt;&lt;br&gt;Audit trail, feedback, evaluation, quality and cost controls" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;strokeWidth=3;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="600" y="860" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-source" value="Source document systems" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="260" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-model" value="Model provider / private model endpoint" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="500" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-idp" value="Corporate identity provider / HR directory" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="720" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-siem" value="SIEM / security monitoring" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="860" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-ci" value="CI and evaluation runner" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillColor=#f5f5f5;strokeColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="1040" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e-submit" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-records" target="sys-ingestion">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="220" />
+              <mxPoint x="300" y="300" />
+              <mxPoint x="580" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ask" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-employee" target="sys-retrieval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="380" />
+              <mxPoint x="320" y="620" />
+              <mxPoint x="580" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-answer" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-retrieval" target="actor-employee">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="660" />
+              <mxPoint x="280" y="660" />
+              <mxPoint x="280" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-audit" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-governance" target="actor-compliance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="880" />
+              <mxPoint x="260" y="880" />
+              <mxPoint x="260" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-feedback" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-reviewer" target="sys-governance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="700" />
+              <mxPoint x="240" y="920" />
+              <mxPoint x="580" y="920" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-policy" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-access" target="sys-governance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="860" />
+              <mxPoint x="220" y="960" />
+              <mxPoint x="580" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-operate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="actor-operator" target="sys-governance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="1020" />
+              <mxPoint x="250" y="1000" />
+              <mxPoint x="580" y="1000" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-index" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-ingestion" target="sys-retrieval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="380" />
+              <mxPoint x="750" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-record-answer" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-retrieval" target="sys-governance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="700" />
+              <mxPoint x="750" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-source" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-ingestion" target="ext-source">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="280" />
+              <mxPoint x="1120" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-ingestion" target="ext-model">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="340" />
+              <mxPoint x="1100" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-query-model" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-retrieval" target="ext-model">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="620" />
+              <mxPoint x="1350" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-idp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-retrieval" target="ext-idp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="680" />
+              <mxPoint x="1180" y="760" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-siem" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-governance" target="ext-siem">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ci-run" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="sys-governance" target="ext-ci">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="1020" />
+              <mxPoint x="900" y="1140" />
+              <mxPoint x="1350" y="1140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ci-report" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="ext-ci" target="sys-governance">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="1040" />
+              <mxPoint x="1500" y="980" />
+              <mxPoint x="1200" y="980" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-controls" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;dashed=1;" edge="1" parent="1" source="sys-governance" target="sys-retrieval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="860" />
+              <mxPoint x="850" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note-fr02" value="FR-02 note: the retrieval engineer is a build-time role that configures chunking strategies and evaluation thresholds outside the runtime system context. Reviewer note: the reviewer sees logged answers through the governance audit trail and returns feedback; no separate answer-review edge is shown at L1." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="80" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="e-submit-label" value="submit documents" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-submit">
+          <mxGeometry x="0.45" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ask-label" value="ask question" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-ask">
+          <mxGeometry x="0.3" y="12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-answer-label" value="return answer or fallback" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-answer">
+          <mxGeometry x="0.4" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-audit-label" value="provide audit trail" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-audit">
+          <mxGeometry x="0.4" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-feedback-label" value="submit answer feedback" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-feedback">
+          <mxGeometry x="0.55" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-policy-label" value="define access policies" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-policy">
+          <mxGeometry x="0.6" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-operate-label" value="operate and monitor" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-operate">
+          <mxGeometry x="0.5" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-index-label" value="[event stream] publish indexed content" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-index">
+          <mxGeometry x="0.5" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-record-answer-label" value="[event stream] record answer" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-record-answer">
+          <mxGeometry x="0.4" y="12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-controls-label" value="[internal] apply controls" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-controls">
+          <mxGeometry x="0.7" y="12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-source-label" value="fetch source documents" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-source">
+          <mxGeometry x="0.5" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-embed-label" value="request embeddings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-embed">
+          <mxGeometry x="0.5" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-query-model-label" value="embed, rerank, and generate" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-query-model">
+          <mxGeometry x="0.6" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-idp-label" value="validate token and entitlements" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-idp">
+          <mxGeometry x="0.55" y="12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-siem-label" value="export audit and security events" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-siem">
+          <mxGeometry x="0.5" y="-12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ci-run-label" value="run evaluation suite" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-ci-run">
+          <mxGeometry x="0.7" y="12" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ci-report-label" value="report regression gate results" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="e-ci-report">
+          <mxGeometry x="0.55" y="-12" relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

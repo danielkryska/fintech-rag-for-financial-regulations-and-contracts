@@ -2,7 +2,7 @@
 
 The list of high-level architecture decisions for this project. Each ADR records one platform-agnostic decision, the options considered, the well-architected trade-offs, and the consequences accepted.
 
-ADRs are for decisions that change the flow or create lasting commitment: retrieval architecture, grounding and citation model, tenancy and permissions, audit, evaluation, deployment topology class, a major library class, a SaaS category. Implementation detail and specific cloud service choices belong in [ARCHITECTURE/](../ARCHITECTURE/README.md) and C4 Level 3 diagrams, not here.
+ADRs are for decisions that change the flow or create lasting commitment: retrieval architecture, grounding and citation model, tenancy and permissions, audit, evaluation, deployment topology class, a major library class, a SaaS category. Implementation detail and specific cloud service choices belong in [c4-architecture/](../c4-architecture/README.md) and the C4 Level 3 drawings, not here.
 
 ## Index
 
@@ -17,7 +17,7 @@ _No decisions yet. Run `/create-adr` to start._
 - One decision per file: `NNNN-short-kebab-title.md`.
 - Numbers are sequential, four digits, and never reused. The command takes the highest existing number plus one.
 - Status values: `Proposed`, `Accepted`, `Superseded by ADR-NNNN`, `Deprecated`.
-- High-level ADRs use `Scope: Cross-cutting`. Platform-specific service choices are recorded in the target architecture and C4 Level 3 diagrams, not as high-level ADRs.
+- High-level ADRs use `Scope: Cross-cutting`. Platform-specific service choices are recorded in the C4 Level 3 drawings and their notes, not as high-level ADRs.
 - Accepted ADRs are immutable. Reverse or change a decision with a new ADR that supersedes the old one.
 - Reference requirement IDs from [REQUIREMENTS.md](../REQUIREMENTS.md).
 - Every ADR includes a `## Well-architected assessment` covering operational excellence, security, reliability, performance efficiency, cost optimization, and sustainability, plus a `## Simplification check`. Mark a pillar `N/A` with a reason; do not omit it.
@@ -27,23 +27,25 @@ _No decisions yet. Run `/create-adr` to start._
 
 ## Drawings
 
-High-level, system-wide ADRs include a draw.io diagram, either:
+C4 diagrams do not live in this folder. They are owned by `/create-c4` and stored in [c4-architecture/](../c4-architecture/README.md) as draw.io XML, following the standard there.
 
-- inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or
-- as a sidecar file `NNNN-<drawing-name>.xml`, linked from the ADR.
-
-The rendered image is `NNNN-<drawing-name>.png` in this folder, embedded in the ADR. Never commit a PNG without its XML source or claim a render that does not exist.
-
-C4 Level 3 component diagrams are platform-specific. They live in `ARCHITECTURE/<platform>/` and are produced by the platform architect, not by `/create-adr`.
+- A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `lvl2_v1_query_answering.xml`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
+- A non-C4 decision sketch may be inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or a sidecar `NNNN-<drawing-name>.xml` linked from the ADR, with a render `NNNN-<drawing-name>.png` only when it exists.
+- Never commit a PNG without its XML source or claim a render that does not exist.
+- C4 Level 3 drawings are platform-specific. They live in `c4-architecture/`, are named `lvl3_v<K>_<technology>_<drawing_name>.xml`, and are produced by the platform architect after Levels 1 and 2 are confirmed. `/create-adr` does not create them.
 
 ## Who owns ADRs
 
 - `/create-adr` — creates high-level, platform-agnostic ADRs and runs the full create → review → fix loop.
-- `adr-reviewer` — read-only review, invoked by the command at every round.
-- `architect-aws`, `architect-azure`, `architect-k8s` — platform advice and C4 Level 3 diagrams. They do not create or edit high-level ADRs.
+- `/create-c4` — owns C4 Levels 1 and 2, the draw.io standard, the validator, the `c4-reviewer` loop, the user confirmation gate, and the C4 index.
+- `adr-reviewer` — read-only review of ADRs, invoked by `/create-adr` at every round.
+- `c4-reviewer` — read-only review of C4 drawings, invoked by `/create-c4`.
+- `architect-aws`, `architect-azure`, `architect-k8s` — platform advice and C4 Level 3 drawings. They do not create or edit high-level ADRs, Level 1, or Level 2.
 
 The platform architects also advise: they review the current design against their platform well-architected framework, find gaps, propose simplifications, and assess security, cost, reliability, operations, performance, and sustainability. Findings that require a high-level choice are routed back to `/create-adr`; the rest become follow-ups.
 
 ## Review gate
 
 `/create-adr` loops with `adr-reviewer` until no **Blocking** or **Major** findings remain. Minor findings can be fixed, recorded as follow-ups, or waived by the user. Only then does the command ask for acceptance; the status becomes `Accepted` only with explicit user approval.
+
+C4 drawings have a separate gate in `/create-c4`: draw.io validator, `c4-reviewer`, fix loop, then explicit user confirmation. The reviewer's `Accept` is not user confirmation.
