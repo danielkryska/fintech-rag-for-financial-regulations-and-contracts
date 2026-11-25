@@ -156,7 +156,7 @@ Material gaps found during this assessment are recorded in Consequences → Foll
 
 ## Diagram
 
-For a system-wide decision, link the confirmed C4 drawing in `c4-architecture/` once `/create-c4` has produced it (for example `lvl2_v1_query_answering.drawio`). If no C4 drawing exists yet, name the Level 1 or Level 2 drawing that `/create-c4` must create. Do not embed C4 XML in the ADR. A non-C4 decision sketch may be inline draw.io XML in a fenced `xml` block or a sidecar `NNNN-<drawing-name>.xml`; include `NNNN-<drawing-name>.png` only when it exists.
+For a system-wide decision, link the confirmed C4 drawing in `c4-architecture/` once `/create-c4` has produced it (for example `step3_lvl2_v4_retrieve-generate-stream.drawio`). If no C4 drawing exists yet, name the Level 1 or Level 2 drawing that `/create-c4` must create. Do not embed C4 XML in the ADR. A non-C4 decision sketch may be inline draw.io XML in a fenced `xml` block or a sidecar `NNNN-<drawing-name>.xml`; include `NNNN-<drawing-name>.png` only when it exists.
 ```
 
 ## Output

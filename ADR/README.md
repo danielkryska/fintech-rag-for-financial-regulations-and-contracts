@@ -29,7 +29,7 @@ _No decisions yet. Run `/create-adr` to start._
 
 C4 diagrams do not live in this folder. They are owned by `/create-c4` and stored in [c4-architecture/](../c4-architecture/README.md) as draw.io XML, following the standard there.
 
-- A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `lvl2_v1_query_answering.drawio`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
+- A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `step3_lvl2_v4_retrieve-generate-stream.drawio`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
 - A non-C4 decision sketch may be inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or a sidecar `NNNN-<drawing-name>.xml` linked from the ADR, with a render `NNNN-<drawing-name>.png` only when it exists.
 - Never commit a PNG without its XML source or claim a render that does not exist.
 - C4 Level 3 drawings are platform-specific. They live in `c4-architecture/`, are named `lvl3_v<K>_<technology>_<drawing_name>.drawio`, and are produced by the platform architect after Levels 1 and 2 are confirmed. `/create-adr` does not create them.

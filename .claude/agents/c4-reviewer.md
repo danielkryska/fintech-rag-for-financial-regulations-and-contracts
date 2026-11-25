@@ -48,7 +48,7 @@ Work through the review checklist in `c4-architecture/README.md` and verify each
 
 - Exactly one `<mxfile>` and one `<diagram>` page.
 - File name matches the level:
-  - Level 1/2: `lvl<N>_v<K>_<drawing_name>.drawio`.
+  - Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate, 4 = stream and authorize).
   - Level 3: `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.drawio`.
 - The drawing name is lowercase snake_case and matches the index row.
 - The title block: at Level 1 only `C4 Level 1 - <system name>` (no version, status, date, requirements, or ADRs on the drawing — they live in the index). At Level 2 and 3 the title block names the level, drawing, version, status, date, requirements covered, and ADRs referenced.

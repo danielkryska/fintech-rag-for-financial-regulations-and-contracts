@@ -62,7 +62,7 @@ You review against the relevant well-architected framework: the AWS Well-Archite
 
 - A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing in `c4-architecture/` that explains it, or names the drawing `/create-c4` must create and records why it does not exist yet.
 - C4 XML embedded in an ADR is a finding: C4 drawings live in `c4-architecture/` and are owned by `/create-c4`.
-- The linked C4 file exists, matches the naming pattern (`lvl1_v<K>_...`, `lvl2_v<K>_...`, `lvl3_v<K>_<technology>_...`), and its index row matches the file.
+- The linked C4 file exists, matches the naming pattern (`lvl1_v<K>_...`, `step<K>_lvl2_v<N>_...`, `lvl3_v<K>_<technology>_...`), and its index row matches the file.
 - A non-C4 sidecar sketch is named `NNNN-<drawing-name>.xml`, is linked from the ADR, and is a complete `<mxfile>` if inline. A render `NNNN-<drawing-name>.png` exists if the ADR claims one. No PNG without its XML source, and no claimed render that does not exist.
 - The drawing matches the decision and does not contradict the text. Geometry, band layout, and line crossings are reviewed by `c4-reviewer`, not here.
 

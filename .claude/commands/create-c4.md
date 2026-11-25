@@ -75,7 +75,7 @@ Cover at least: document ingestion and processing; indexing and retrieval; query
 
 Ask the user to confirm the slice map. Then, for each slice:
 
-1. Draw `c4-architecture/lvl2_v<K>_<slice>.drawio`.
+1. Draw `c4-architecture/step<K>_lvl2_v<N>_<slice>.drawio`, where K is the slice step number.
 2. Structure: one outer container box (`sys-container`) named after the system — light blue `#DAE8FC`, thick border, like the Level 1 black box. Inside it, three groups with dashed lines and no fill: **Web app UI** (`grp-ui`) on top, **Backend** (`grp-backend`) in the middle, **Repositories (DBs)** (`grp-repos`) at the bottom. Actors above the block; external systems below it.
 3. Box labels: bold module name on the first line, bullet points of what the block does or keeps, and the generic technology type in brackets on the last line: `[web ui]`, `[worker]`, `[service]`, `[object storage]`, `[vector db]`, `[audit store]`.
 4. Edge labels are two lines: the action on the first line, the protocol on the second (`POST /documents` newline `[http]`). Sync and async use solid vs dashed lines, explained in a legend.

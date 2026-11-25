@@ -11,7 +11,7 @@ Read these before drawing:
 1. [REQUIREMENTS.md](../REQUIREMENTS.md) — actors, functional and non-functional requirements.
 2. [ARCHITECTURE.md](../ARCHITECTURE.md) — system summary and open decisions.
 3. [ADR/README.md](../ADR/README.md) and every accepted ADR.
-4. The project walkthrough PDF in `ADR/` — including its hand-drawn flows.
+4. The project walkthrough PDF in this folder and in `ADR/` — including its hand-drawn flows.
 5. [src/README.md](../src/README.md) and [infra/README.md](../infra/README.md).
 6. Every existing `c4-architecture/*.drawio` and the index below.
 
@@ -20,7 +20,7 @@ If the walkthrough PDF has no text layer, render its pages to images first (for 
 ## Folder and file conventions
 
 - This is the only architecture drawing folder. There is no `ARCHITECTURE/` folder.
-- Level 1 and 2: `lvl<N>_v<K>_<drawing_name>.drawio` — for example `lvl1_v1_system_context.drawio`, `lvl2_v1_query_answering.drawio`.
+- Level 1: `lvl1_v<K>_<drawing_name>.drawio` — for example `lvl1_v3_system_context.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate, 4 = stream and authorize) — for example `step3_lvl2_v4_retrieve-generate-stream.drawio`.
 - Level 3: `lvl3_v<K>_<technology>_<drawing_name>.drawio` — technology is `aws`, `azure`, or `k8s`; for example `lvl3_v1_aws_query_answering.drawio`.
 - `<drawing_name>` is lowercase snake_case. One drawing per file. One `<diagram>` page per file.
 - The XML is the source of truth. A PNG is optional; never commit a PNG without its XML, and never claim a render that does not exist.
@@ -96,10 +96,10 @@ Rules:
 
 One drawing per slice. The slice map is agreed with the user before drawing. A typical map for this project:
 
-- Document ingestion and processing
-- Indexing and retrieval
-- Query and answer generation
-- Governance, audit, and evaluation
+- Step 1 — Document ingestion (upload, registration, hierarchical chunking)
+- Step 2 — Embed and index (event-driven, no user involved)
+- Step 3 — Retrieve, generate, cite, stream, authorize (question and answer path)
+- Step 4 — Stream and authorize
 
 **Structure** — the drawing follows the c4model.com container-diagram pattern:
 
@@ -193,18 +193,17 @@ The index is the authoritative list of drawings and their status. `/create-c4` u
 
 | Level | Version | Drawing | File | Scope | Covers | ADRs | Status | Confirmed |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | v1 | System context | [lvl1_v1_system_context.drawio](lvl1_v1_system_context.drawio) | Whole system | FR-01 to FR-08, NFR-01 to NFR-08 | — | Superseded by lvl1_v2_system_context.drawio | 2026-11-18 |
-| 1 | v2 | System context | [lvl1_v2_system_context.drawio](lvl1_v2_system_context.drawio) | Whole system (compliance officer and SIEM restored) | FR-01 to FR-08, NFR-01 to NFR-08 | — | Draft | — |
-| 2 | v1 | General flow | [lvl2_v1_general_flow.drawio](lvl2_v1_general_flow.drawio) | Whole pipeline: ingestion, embedding/indexing, query/answer/streaming (FR-08 and EVAL-04 deferred to the governance slice) | FR-01 to FR-07, NFR-01 to NFR-08 | — | Confirmed | 2026-11-18 |
-| 2 | v1 | Document ingestion | [lvl2_v1_document_ingestion.drawio](lvl2_v1_document_ingestion.drawio) | Slice: upload, gateway, extraction orchestrator and workers | FR-01, NFR-03 | — | Draft | — |
-| 2 | v1 | Embedding and indexing | [lvl2_v1_embedding_indexing.drawio](lvl2_v1_embedding_indexing.drawio) | Slice: chunking, embedding, and index writes | FR-02, FR-04, NFR-03, NFR-07 | — | Draft | — |
-| 2 | v1 | Query, answer, and streaming | [lvl2_v1_query_answering.drawio](lvl2_v1_query_answering.drawio) | Slice: retrieve, rerank, generate, cite, verify, stream, authorize | FR-03 to FR-07, NFR-01 to NFR-03, NFR-05 to NFR-08 | — | Draft | — |
+| 1 | v3 | System context | [lvl1_v3_system_context.drawio](lvl1_v3_system_context.drawio) | Whole system: who uses the assistant and which external systems it depends on | FR-01 to FR-08, NFR-01 to NFR-08 | — | Draft | — |
+| 2 | v6 | Document ingestion (step 1) | [step1_lvl2_v6_document-ingestion.drawio](step1_lvl2_v6_document-ingestion.drawio) | Slice: upload, registration, hierarchical chunking, processed store, hand-off to step 2 | FR-01, FR-02, NFR-03, NFR-06 | — | Draft | — |
+| 2 | v2 | Embed and index (step 2) | [step2_lvl2_v2_embed-and-index.drawio](step2_lvl2_v2_embed-and-index.drawio) | Slice: indexing coordinator, embedding, index writes to vector DB, keyword index, and chunk store; event-driven, no user involved | FR-02, FR-03, FR-04, NFR-03, NFR-04, NFR-06, NFR-07 | — | Draft | — |
+| 2 | v4 | Retrieve, generate, cite, stream, authorize (step 3) | [step3_lvl2_v4_retrieve-generate-stream.drawio](step3_lvl2_v4_retrieve-generate-stream.drawio) | Slice: question path (gateway, BFF, query preparation, retrieve & rerank, context builder, answer worker) and answer path (PII re-hydration, SSE streaming) | FR-03 to FR-08, NFR-01 to NFR-03, NFR-05 to NFR-08 | — | Draft | — |
+| 2 | v1 | Stream and authorize (step 4) | [step4_lvl2_v1_stream-and-authorize.drawio](step4_lvl2_v1_stream-and-authorize.drawio) | Slice: query workers, answer events, edge streaming service, SSE to the browser | FR-05, FR-08, NFR-01, NFR-02, NFR-06, NFR-07 | — | Draft | — |
 
 ## Review checklist
 
 There is no static validator. `c4-reviewer` checks the mechanical rules in this standard by reading the XML, together with the semantic review of meaning, completeness, and consistency with the requirements and ADRs. Before confirming a drawing, the reviewer goes through:
 
-- File naming matches the level (`lvl1_v<K>_<name>.drawio`, `lvl2_v<K>_<name>.drawio`, `lvl3_v<K>_<aws|azure|k8s>_<name>.drawio`); one `<mxfile>` with one `<diagram>` page; unique cell ids; every edge has a source, a target, and valid waypoints.
+- File naming matches the level (`lvl1_v<K>_<name>.drawio`, `step<K>_lvl2_v<N>_<name>.drawio`, `lvl3_v<K>_<aws|azure|k8s>_<name>.drawio`); one `<mxfile>` with one `<diagram>` page; unique cell ids; every edge has a source, a target, and valid waypoints.
 - Title block: at Level 1 only `C4 Level 1 - <system name>`; at Level 2 and 3 the level, name, version, status, date, requirements, and ADRs.
 - Level 1: exactly one `system` cell; ids `actor-<name>`, `system`, `ext-<name>`; top-down order (actors above the system, externals below), each layer centered horizontally on the page's center axis; actors in a centered row with `mxgraph.c4.person2`, fill `#1F4E79`, and white labels (bold name, `[Person]`, responsibility bullets) vertically centered; the system with `mxgraph.c4.system`, fill `#DAE8FC`, thick solid border, `[Software System]`, and bullet points; externals with `mxgraph.c4.external`, fill `#F5F5F5`, solid border, and `[Software System]`; edges run only `actor → system` and `system → external`, routed orthogonally like circuit-board traces (right-angle paths, no diagonals); lines carry no text — solid = synchronous request, dashed = asynchronous request; a legend box shows the swatches and arrow samples; no requirement IDs, vendor names, or technology tags on the drawing.
 - Level 2: one outer system container (light blue, thick border, named after the system) holding three dashed no-fill groups in order (Web app UI, Backend, Repositories (DBs)); every box in exactly one group with a generic `[technology]` line at the end of its label; box labels are bold name / bullets / technology line; edge labels are two lines (action newline `[protocol]`); externals below the block; queues, streams, and brokers appear on the edge, never as boxes. Level 3: the three bands in order (Representation, Business logic, Repository); every box in exactly one band with a generic `[technology]` tag; business boxes list what they do as bullets; every edge label carries a `[protocol]` tag and an action description; queues, streams, and brokers appear on the edge, never as boxes.
