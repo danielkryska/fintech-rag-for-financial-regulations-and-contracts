@@ -16,7 +16,7 @@ System-wide architecture overview for the Fintech RAG showcase. **ADRs are the s
 
 A governed retrieval-augmented generation pipeline. Documents are ingested, parsed with OCR fallback, redacted, chunked, and indexed with permission metadata. Questions are redacted, retrieved with hybrid search, permission-filtered, reranked, and answered with inline citations or an explicit insufficient-context response. Every interaction is audited and feeds evaluation. The required behavior and quality gates are in [REQUIREMENTS.md](REQUIREMENTS.md).
 
-The system must be deployable on three targets: AWS, Azure, and Kubernetes / portable. The platform-specific realisations will be recorded as C4 Level 3 drawings in [c4-architecture/](c4-architecture/README.md), named `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.xml` and produced by the matching platform architect after Levels 1 and 2 are confirmed.
+The system must be deployable on three targets: AWS, Azure, and Kubernetes / portable. The platform-specific realisations will be recorded as C4 Level 3 drawings in [c4-architecture/](c4-architecture/README.md), named `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.drawio` and produced by the matching platform architect after Levels 1 and 2 are confirmed.
 
 ## Architectural constraints
 
@@ -81,7 +81,7 @@ End-to-end business flows will be expressed in the confirmed C4 Level 2 slice dr
 
 - All C4 drawings live in [c4-architecture/](c4-architecture/README.md) as draw.io XML. The standard, naming, index, and review gate are defined there.
 - C4 Level 1 (system context) and Level 2 (containers and business-flow slices) are system-wide and platform-agnostic. They are drawn by `/create-c4` and tied to the ADRs that explain them.
-- C4 Level 3 (platform realisation) is platform-specific. The matching platform architect draws it after Levels 1 and 2 are confirmed; `/create-c4` runs the validator, `c4-reviewer`, and the user confirmation gate. File naming is `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.xml`.
+- C4 Level 3 (platform realisation) is platform-specific. The matching platform architect draws it after Levels 1 and 2 are confirmed; `/create-c4` runs `c4-reviewer` and the user confirmation gate. File naming is `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.drawio`.
 - C4 Level 4 (code) is out of scope; the code documents itself.
 
 ## Changing the architecture

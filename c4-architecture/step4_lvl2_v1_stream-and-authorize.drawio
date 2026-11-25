@@ -1,0 +1,172 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="stream-and-authorize" name="Stream and authorize">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 2 - Stream and authorize (step 4, v1, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Requirements: FR-05, FR-08, NFR-01, NFR-02, NFR-06, NFR-07&lt;br&gt;Flow: employee → web app → API gateway (JWT, rate limit) → BFF → query workers → answer events → edge streaming service → gateway → SSE to the browser&lt;br&gt;ADRs: gateway product, SSE vs WebSocket, event stream retention - none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1400" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b style=&quot;font-size:15px&quot;&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;verticalAlign=top;align=center;spacingTop=6;container=1;collapsible=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="1620" height="1165" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-representation" value="&lt;b&gt;Representation&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="60" width="340" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="480" y="295" width="480" height="830" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="1200" y="295" width="380" height="830" as="geometry" />
+        </mxCell>
+        <mxCell id="web-ui" value="&lt;b style=&quot;font-size:15px&quot;&gt;Web Application&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: web ui]&lt;/span&gt;&lt;br&gt;• asks questions and renders streamed tokens with clickable citations [1], [2]&lt;br&gt;• reconnects with Last-Event-ID; cancel button stops the answer&lt;br&gt;• sends helpful / not helpful feedback&lt;br&gt;• signs in through the IDP (OIDC) and holds the JWT" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-representation">
+          <mxGeometry x="30" y="40" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="api-gateway" value="&lt;b style=&quot;font-size:15px&quot;&gt;API gateway&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: api gateway]&lt;/span&gt;&lt;br&gt;• terminates TLS, load-balances, registers / deregisters service instances&lt;br&gt;• validates the JWT signature with the IDP public key and forwards the groups / roles claims&lt;br&gt;• per-user and per-tenant request rate limits (token bucket); answers 429 when exceeded&lt;br&gt;• streams tokens to the browser (SSE) and passes Last-Event-ID on reconnect&lt;br&gt;• detects a client disconnect and cancels the in-flight query" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="355" width="340" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="bff" value="&lt;b style=&quot;font-size:15px&quot;&gt;BFF service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• accepts the question, assigns chat id and message id, publishes the query message with the JWT claims (roles, tenant)&lt;br&gt;• checks the remaining token budget; when it is exhausted, sets retrieval-only mode (no LLM answer)&lt;br&gt;• stores helpful / not helpful feedback for the evaluation set" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="180" y="40" width="260" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="workers" value="&lt;b style=&quot;font-size:15px&quot;&gt;Query workers (step 3)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• Retrieve &amp;amp; rerank worker: redaction, permission check, hybrid search, rerank&lt;br&gt;• Generate &amp;amp; cite worker: context, prompt, LLM, verify, cited answer&lt;br&gt;• stops generating when a cancel event arrives" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="180" y="280" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge" value="&lt;b style=&quot;font-size:15px&quot;&gt;Edge streaming service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• authenticates the stream with the JWT public key (cached from the IDP) and authorizes by claims: only the asker can read it&lt;br&gt;• subscribes to the answer events of the message (token, citation, done, error) and keeps them for replay&lt;br&gt;• resumes from Last-Event-ID after a reconnect&lt;br&gt;• on client disconnect, sends cancel to the query workers&lt;br&gt;• token counter: adds the tokens reported on done to the user's usage and flags an exhausted budget" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="180" y="550" width="260" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="feedback" value="&lt;b style=&quot;font-size:15px&quot;&gt;Feedback store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: database]&lt;/span&gt;&lt;br&gt;• helpful / not helpful mark per answer id&lt;br&gt;• feeds the evaluation set and the regression suite (FR-08, EVAL-04)&lt;br&gt;• lifecycle: kept as long as the answer's audit record" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="40" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="quota" value="&lt;b style=&quot;font-size:15px&quot;&gt;Quota &amp;amp; usage store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• per-user and per-tenant LLM token budget and usage (written by the token counter)&lt;br&gt;• budget exhausted → retrieval-only mode (NFR-02)&lt;br&gt;• lifecycle: counters reset each budget period" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="280" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" value="&lt;span style=&quot;color:#ffffff;font-weight:bold;font-size:15px&quot;&gt;Employee&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• asks questions about policies, contracts and regulations" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="185" width="240" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="idp" value="&lt;b style=&quot;font-size:15px&quot;&gt;Corporate identity provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;register / login, federation; issues the JWT with groups and roles; publishes the public key (JWKS)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="34" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="System boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="72" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="110" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-ui" value="UI / API container" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="148" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-service" value="Service / worker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="186" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-store" value="Data store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="224" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync call [http / api]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="266" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async [event / queue]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="304" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-jump-text" value="arc = lines cross, not connected" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="342" width="310" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="278" as="sourcePoint" />
+            <mxPoint x="135" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="316" as="sourcePoint" />
+            <mxPoint x="135" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+
+        <!-- ============ EDGES (explicit waypoints; data movers are labels, not boxes) ============ -->
+        <mxCell id="e-ask" value="ask questions&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="actor" target="web-ui">
+          <mxGeometry x="-0.3333" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-signin" value="sign in (OIDC)&#10;[https]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.875;exitPerimeter=0;entryX=1.0;entryY=0.3333;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="idp">
+          <mxGeometry x="0.027" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="340" />
+              <mxPoint x="380" y="500" />
+            </Array>
+            <mxPoint x="-40" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-question" value="submit question&#10;[https]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.3214;exitY=1.0;exitPerimeter=0;entryX=0.3529;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="api-gateway">
+          <mxGeometry x="0.4316" relative="1" as="geometry">
+            <mxPoint x="-70" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-stream-web" value="answer stream&#10;[SSE over https]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.6765;exitY=0.0;exitPerimeter=0;entryX=0.7143;entryY=1.0;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="web-ui">
+          <mxGeometry x="-0.4316" relative="1" as="geometry">
+            <mxPoint x="75" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-jwt" value="validate JWT&#10;(public key / JWKS)&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5833;exitPerimeter=0;entryX=1.0;entryY=0.6667;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="idp">
+          <mxGeometry x="0.2222" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-route" value="route with JWT&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.3611;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="bff">
+          <mxGeometry x="0.3571" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gw-edge" value="answer stream (SSE) /&#10;disconnect notice&#10;[http]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.7778;exitPerimeter=0;entryX=0.0;entryY=0.1667;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="edge">
+          <mxGeometry x="0.7313" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="595" />
+              <mxPoint x="850" y="985" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-query" value="query message&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.4231;exitY=1.0;exitPerimeter=0;entryX=0.4231;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="bff" target="workers">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-events" value="token / citation /&#10;done / error&#10;[event stream]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.1538;exitY=1.0;exitPerimeter=0;entryX=0.1538;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="workers" target="edge">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+            <mxPoint x="-68" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-cancel" value="cancel on&#10;disconnect&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.4615;exitY=0.0;exitPerimeter=0;entryX=0.4615;entryY=1.0;entryPerimeter=0;" edge="1" parent="1" source="edge" target="workers">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+            <mxPoint x="72" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-fb" value="store feedback&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2353;exitPerimeter=0;entryX=0.0;entryY=0.3636;entryPerimeter=0;" edge="1" parent="1" source="bff" target="feedback">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-budget" value="check budget&#10;[key-value read]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.8235;exitPerimeter=0;entryX=0.0;entryY=0.2727;entryPerimeter=0;" edge="1" parent="1" source="bff" target="quota">
+          <mxGeometry x="-0.4222" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1560" y="575" />
+              <mxPoint x="1560" y="705" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-usage" value="add consumed tokens&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.1875;exitPerimeter=0;entryX=0.0;entryY=0.7273;entryPerimeter=0;" edge="1" parent="1" source="edge" target="quota">
+          <mxGeometry x="-0.5315" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1560" y="990" />
+              <mxPoint x="1560" y="755" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,94 @@
+<mxfile host="65bd71144e">
+    <diagram id="lvl1-system-context" name="L1 System context">
+        <mxGraphModel dx="2007" dy="1367" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1300" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=18;fontStyle=1;whiteSpace=wrap;" value="&lt;b&gt;C4 Level 1 - Enterprise RAG knowledge assistant&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="30" width="1000" x="40" y="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-7" edge="1" parent="1" source="actor-records" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="system">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-records" parent="1" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Records administrator&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• uploads documents through the UI&lt;br&gt;• tracks ingestion status" vertex="1">
+                    <mxGeometry height="240" width="220" x="530" y="135" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-6" edge="1" parent="1" source="actor-employee" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="system">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-employee" parent="1" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Employee&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• asks questions&lt;br&gt;• verifies answers with citations" vertex="1">
+                    <mxGeometry height="240" width="220" x="790" y="134" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-5" edge="1" parent="1" source="actor-engineer" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="system">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor-engineer" parent="1" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Engineer&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• defines access permissions&lt;br&gt;• reviews answer quality&lt;br&gt;• operates and monitors&lt;br&gt;• configures document and search quality" vertex="1">
+                    <mxGeometry height="240" width="220" x="1050" y="134" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-1" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ext-embed">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-2" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ext-rerank">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-3" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ext-gen">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1k-Z8WGSfrHm6xGG_Kmr-4" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ext-idp">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="system" parent="1" style="shape=mxgraph.c4.system;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=3;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;• ingests documents&lt;br&gt;• redacts personal data from documents and questions&lt;br&gt;• organizes documents for search&lt;br&gt;• finds relevant passages for each question&lt;br&gt;• answers questions with citations&lt;br&gt;• enforces access permissions&lt;br&gt;• declines to answer when evidence is insufficient&lt;br&gt;• records every answer for audit&lt;br&gt;• learns from feedback" vertex="1">
+                    <mxGeometry height="300" width="420" x="690" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext-embed" parent="1" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Embedding model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;makes text searchable by meaning" vertex="1">
+                    <mxGeometry height="130" width="280" x="230" y="866" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext-rerank" parent="1" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Reranking model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;orders results by relevance" vertex="1">
+                    <mxGeometry height="130" width="280" x="580" y="866" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext-gen" parent="1" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Text generation model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;writes answers based on source evidence" vertex="1">
+                    <mxGeometry height="130" width="280" x="950" y="866" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext-idp" parent="1" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" value="&lt;b&gt;Corporate identity provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;authenticates users and provides entitlements" vertex="1">
+                    <mxGeometry height="130" width="280" x="1310" y="866" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=13;fontStyle=1;" value="&lt;b&gt;Legend&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="210" width="760" x="40" y="1070" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-swatch-person" parent="legend-1" style="shape=mxgraph.c4.person2;whiteSpace=wrap;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=11;align=center;verticalAlign=middle;" value="Person" vertex="1">
+                    <mxGeometry height="80" width="150" x="20" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-swatch-system" parent="legend-1" style="shape=mxgraph.c4.system;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=3;fontColor=#333333;fontSize=11;align=center;verticalAlign=middle;" value="Software system" vertex="1">
+                    <mxGeometry height="80" width="150" x="190" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-swatch-external" parent="legend-1" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=11;align=center;verticalAlign=middle;" value="External software system" vertex="1">
+                    <mxGeometry height="80" width="220" x="360" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-sync-src" parent="legend-1" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1">
+                    <mxGeometry height="14" width="40" x="20" y="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-sync-tgt" parent="legend-1" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1">
+                    <mxGeometry height="14" width="40" x="140" y="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-async-src" parent="legend-1" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1">
+                    <mxGeometry height="14" width="40" x="420" y="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-async-tgt" parent="legend-1" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1">
+                    <mxGeometry height="14" width="40" x="540" y="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-sync-text" parent="legend-1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="synchronous request" vertex="1">
+                    <mxGeometry height="30" width="180" x="200" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-async-text" parent="legend-1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="asynchronous request" vertex="1">
+                    <mxGeometry height="30" width="180" x="600" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-e-sync" edge="1" parent="legend-1" source="legend-sync-src" style="html=1;endArrow=block;endFill=1;strokeWidth=1.5;" target="legend-sync-tgt">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-e-async" edge="1" parent="legend-1" source="legend-async-src" style="html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" target="legend-async-tgt">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

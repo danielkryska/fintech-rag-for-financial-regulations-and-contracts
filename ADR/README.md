@@ -29,15 +29,15 @@ _No decisions yet. Run `/create-adr` to start._
 
 C4 diagrams do not live in this folder. They are owned by `/create-c4` and stored in [c4-architecture/](../c4-architecture/README.md) as draw.io XML, following the standard there.
 
-- A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `lvl2_v1_query_answering.xml`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
+- A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `lvl2_v1_query_answering.drawio`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
 - A non-C4 decision sketch may be inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or a sidecar `NNNN-<drawing-name>.xml` linked from the ADR, with a render `NNNN-<drawing-name>.png` only when it exists.
 - Never commit a PNG without its XML source or claim a render that does not exist.
-- C4 Level 3 drawings are platform-specific. They live in `c4-architecture/`, are named `lvl3_v<K>_<technology>_<drawing_name>.xml`, and are produced by the platform architect after Levels 1 and 2 are confirmed. `/create-adr` does not create them.
+- C4 Level 3 drawings are platform-specific. They live in `c4-architecture/`, are named `lvl3_v<K>_<technology>_<drawing_name>.drawio`, and are produced by the platform architect after Levels 1 and 2 are confirmed. `/create-adr` does not create them.
 
 ## Who owns ADRs
 
 - `/create-adr` — creates high-level, platform-agnostic ADRs and runs the full create → review → fix loop.
-- `/create-c4` — owns C4 Levels 1 and 2, the draw.io standard, the validator, the `c4-reviewer` loop, the user confirmation gate, and the C4 index.
+- `/create-c4` — owns C4 Levels 1 and 2, the draw.io standard, the `c4-reviewer` loop, the user confirmation gate, and the C4 index.
 - `adr-reviewer` — read-only review of ADRs, invoked by `/create-adr` at every round.
 - `c4-reviewer` — read-only review of C4 drawings, invoked by `/create-c4`.
 - `architect-aws`, `architect-azure`, `architect-k8s` — platform advice and C4 Level 3 drawings. They do not create or edit high-level ADRs, Level 1, or Level 2.
@@ -48,4 +48,4 @@ The platform architects also advise: they review the current design against thei
 
 `/create-adr` loops with `adr-reviewer` until no **Blocking** or **Major** findings remain. Minor findings can be fixed, recorded as follow-ups, or waived by the user. Only then does the command ask for acceptance; the status becomes `Accepted` only with explicit user approval.
 
-C4 drawings have a separate gate in `/create-c4`: draw.io validator, `c4-reviewer`, fix loop, then explicit user confirmation. The reviewer's `Accept` is not user confirmation.
+C4 drawings have a separate gate in `/create-c4`: `c4-reviewer` (mechanical checklist and semantic review), fix loop, then explicit user confirmation. The reviewer's `Accept` is not user confirmation.

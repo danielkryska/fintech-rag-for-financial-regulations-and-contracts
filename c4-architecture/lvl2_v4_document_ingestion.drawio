@@ -1,0 +1,300 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="lvl2-ingestion" name="L2 Document ingestion">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500" pageHeight="2400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 2 - Document ingestion (v4, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Requirements: FR-01, NFR-03&lt;br&gt;Flow: Web UI → API GW → BFF → raw store → file registration → metadata DB → orchestrator → workers → temp store → temp file registration → temp metadata DB → processed store → indexing&lt;br&gt;ADRs: none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1300" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ===== External: person (left of the web app) and IDP (left of the API gateway) ===== -->
+        <mxCell id="actor-records" value="&lt;span style=&quot;color:#ffffff;font-weight:bold;font-size:15px&quot;&gt;Records administrator&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• uploads policy, contract, and regulatory documents" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="185" width="240" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-idp" value="&lt;b style=&quot;font-size:15px&quot;&gt;Corporate identity provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;authenticates users, resolves groups and roles, embeds them in the JWT" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ===== System boundary ===== -->
+        <mxCell id="sys-container" value="&lt;b style=&quot;font-size:15px&quot;&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;verticalAlign=top;align=center;spacingTop=6;container=1;collapsible=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="1530" height="2175" as="geometry" />
+        </mxCell>
+
+        <!-- Representation layer (web app only) -->
+        <mxCell id="grp-representation" value="&lt;b&gt;Representation&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="60" width="340" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="web-ui" value="&lt;b style=&quot;font-size:15px&quot;&gt;Web Application&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: web ui]&lt;/span&gt;&lt;br&gt;• uploads documents via pre-signed URLs to the raw store&lt;br&gt;• shows ingestion status and rejections&lt;br&gt;• lists / edits document records through the BFF" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-representation">
+          <mxGeometry x="30" y="40" width="280" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- API gateway: standalone, not part of the Representation group -->
+        <mxCell id="api-gateway" value="&lt;b style=&quot;font-size:15px&quot;&gt;API gateway&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: api gateway]&lt;/span&gt;&lt;br&gt;• receives upload and CRUD requests&lt;br&gt;• validates the JWT with the IDP and propagates groups/roles&lt;br&gt;• routes authenticated requests to the BFF" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="355" width="340" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Backend layer -->
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="480" y="295" width="400" height="1840" as="geometry" />
+        </mxCell>
+        <mxCell id="bff" value="&lt;b style=&quot;font-size:15px&quot;&gt;BFF service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• generates pre-signed upload URLs for the raw store&lt;br&gt;• CRUD for document records (metadata + raw pointer)&lt;br&gt;• enforces RBAC using JWT group/role claims" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="40" width="230" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="file-service" value="&lt;b style=&quot;font-size:15px&quot;&gt;File registration service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• consumes document.uploaded events from the raw store&lt;br&gt;• validates and normalizes file metadata (id, type, size, owner, permissions)&lt;br&gt;• writes the document record to the metadata store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="250" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="orchestrator" value="&lt;b style=&quot;font-size:15px&quot;&gt;Transformation orchestrator&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: orchestrator]&lt;/span&gt;&lt;br&gt;• consumes processing triggers from the metadata store and image-processing events from the processed store&lt;br&gt;• dispatches the right worker per file type&lt;br&gt;• validates documents and rejects malformed / poisoned input&lt;br&gt;• tracks processing status and errors in the temp document metadata store&lt;br&gt;• when processing ends, moves finished chunks from the temp bucket to the processed store (s3 mv)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="440" width="230" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="temp-reg-service" value="&lt;b style=&quot;font-size:15px&quot;&gt;Temp file registration service&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• consumes object-created events from the temp bucket&lt;br&gt;• does CRUD on the temp document metadata store: processing state, errors, processed files&lt;br&gt;• records the key document type (pdf / docx / image) per document" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="730" width="230" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="ocr-worker" value="&lt;b style=&quot;font-size:15px&quot;&gt;Image / OCR worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• converts scanned pages and embedded PDF images to text&lt;br&gt;• chunks text by hierarchy&lt;br&gt;• also processes images embedded in PDFs (dispatched on processed-store events)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="970" width="230" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="pdf-worker" value="&lt;b style=&quot;font-size:15px&quot;&gt;PDF extractor worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• extracts text from PDFs&lt;br&gt;• chunks text by hierarchy (chapters / sections)&lt;br&gt;• falls back to the OCR worker if text extraction fails&lt;br&gt;• writes chunks to temp storage" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="1210" width="230" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="docx-worker" value="&lt;b style=&quot;font-size:15px&quot;&gt;DOCX extractor worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• extracts text from DOCX documents&lt;br&gt;• chunks text by hierarchy&lt;br&gt;• writes chunks to temp storage" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="1420" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="pii-worker" value="&lt;b style=&quot;font-size:15px&quot;&gt;PII redaction &amp; chunk writer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• detects and redacts personal data&lt;br&gt;• reads chunks from temp storage and writes anonymized chunked JSON with placeholders such as &amp;lt;person 1&amp;gt; only back to temp&lt;br&gt;• writes the real-&amp;gt;placeholder mapping to the PII store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="140" y="1610" width="230" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- Repositories -->
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="1160" y="295" width="330" height="1795" as="geometry" />
+        </mxCell>
+        <mxCell id="raw-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;Raw document store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: object storage]&lt;/span&gt;&lt;br&gt;• keeps original uploaded documents&lt;br&gt;• emits document.uploaded to the file registration service&lt;br&gt;• lifecycle: kept for the life of the document (versioned), removed on delete" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="50" width="260" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="meta-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;Document metadata store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• document id, type, status, permissions&lt;br&gt;• receives file meta from the file registration service and triggers processing&lt;br&gt;• lifecycle: kept for the life of the document record; status history retained" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="240" width="260" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="processed-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;Processed document store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: object storage]&lt;/span&gt;&lt;br&gt;• keeps anonymized chunked JSON; only &amp;lt;person 1&amp;gt; style placeholders&lt;br&gt;• receives finished chunks moved from the temp bucket by the orchestrator (s3 mv)&lt;br&gt;• emits document.processed events to the indexing slice&lt;br&gt;• emits image-processing events to the orchestrator for images embedded in PDFs&lt;br&gt;• lifecycle: kept while the source document is active; rebuilt on reprocessing" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="530" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="temp-meta-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;Temp document metadata store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• processing state per document: status, errors, processed files, key document type&lt;br&gt;• written by the temp file registration service; read and updated by the orchestrator&lt;br&gt;• lifecycle: short-lived, records expire 7 days after processing ends (TTL)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="810" width="260" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="temp-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;Temp artifact storage&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: object storage]&lt;/span&gt;&lt;br&gt;• keeps intermediate PDF, OCR, and DOCX chunk artifacts&lt;br&gt;• emits object-created events to the temp file registration service&lt;br&gt;• finished chunks are moved out (s3 mv) by the orchestrator when processing ends&lt;br&gt;• lifecycle: short-lived, auto-expires after 1 day (bucket lifecycle rule)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="1165" width="260" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="pii-store" value="&lt;b style=&quot;font-size:15px&quot;&gt;PII mapping store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• keeps real user personal data mapped to placeholders&lt;br&gt;• identity vault, access-restricted&lt;br&gt;• lifecycle: kept as long as the source document; deleted with it (erasure requests)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="1585" width="260" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- External consumer of document.processed (right of the processed store) -->
+        <mxCell id="slice-embed" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding and indexing slice&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;consumes document.processed events" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2080" y="970" width="300" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Legend (left column, under the externals) -->
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="34" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="System boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="72" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="110" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-ui" value="UI / API container" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="148" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-service" value="Service / worker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="186" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-store" value="Data store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="224" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync call [http / api]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="266" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async [event / queue]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="304" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-jump-text" value="arc = lines cross, not connected" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="342" width="310" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="278" as="sourcePoint" />
+            <mxPoint x="135" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="316" as="sourcePoint" />
+            <mxPoint x="135" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============ EDGES (explicit waypoints; data movers are labels, not boxes) ============ -->
+        <mxCell id="e-upload" value="upload documents&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="actor-records" target="web-ui">
+          <mxGeometry x="-0.3333" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-send" value="submit / CRUD&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.5;exitY=1.0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="api-gateway">
+          <mxGeometry x="0.4316" relative="1" as="geometry">
+            <mxPoint x="70" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-auth" value="validate token,&#10;fetch groups/roles&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5;exitPerimeter=0;entryX=1.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="ext-idp">
+          <mxGeometry x="0.2222" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-route" value="route with JWT&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="bff">
+          <mxGeometry x="0.4167" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-web-upload" value="upload via pre-signed URL&#10;[https]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.7692;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="raw-store">
+          <mxGeometry x="-0.2099" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1820" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-presign" value="generate pre-signed URL&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.3235;exitPerimeter=0;entryX=0.0;entryY=0.3;entryPerimeter=0;" edge="1" parent="1" source="bff" target="raw-store">
+          <mxGeometry x="-0.0571" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-crud" value="CRUD document records&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.7353;exitPerimeter=0;entryX=0.0;entryY=0.2059;entryPerimeter=0;" edge="1" parent="1" source="bff" target="meta-store">
+          <mxGeometry x="0.4565" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1400" y="560" />
+              <mxPoint x="1400" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-raw-event" value="document.uploaded&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.8667;exitPerimeter=0;entryX=1.0;entryY=0.3667;entryPerimeter=0;" edge="1" parent="1" source="raw-store" target="file-service">
+          <mxGeometry x="-0.4947" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1340" y="575" />
+              <mxPoint x="1340" y="700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-file-meta" value="persist file meta&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.6667;exitPerimeter=0;entryX=0.0;entryY=0.6471;entryPerimeter=0;" edge="1" parent="1" source="file-service" target="meta-store">
+          <mxGeometry x="0.2" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-trigger" value="processing trigger&#10;[change event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.8824;exitPerimeter=0;entryX=1.0;entryY=0.24;entryPerimeter=0;" edge="1" parent="1" source="meta-store" target="orchestrator">
+          <mxGeometry x="-0.0652" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1460" y="785" />
+              <mxPoint x="1460" y="895" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-move" value="s3 mv finished chunks&#10;from temp bucket&#10;[s3 api]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.175;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="processed-store">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-processed-orc" value="process embedded&#10;PDF images&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.475;exitPerimeter=0;entryX=1.0;entryY=0.74;entryPerimeter=0;" edge="1" parent="1" source="processed-store" target="orchestrator">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-orch-tmeta" value="track status &amp; errors&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.94;exitPerimeter=0;entryX=0.0;entryY=0.1316;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="temp-meta-store">
+          <mxGeometry x="-0.5098" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1520" y="1070" />
+              <mxPoint x="1520" y="1230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ocr" value="run OCR&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="ocr-worker">
+          <mxGeometry x="0.8451" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="960" />
+              <mxPoint x="930" y="1450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pdf" value="extract PDF&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="pdf-worker">
+          <mxGeometry x="0.8842" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="960" />
+              <mxPoint x="930" y="1690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-docx" value="extract DOCX&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="docx-worker">
+          <mxGeometry x="0.9043" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="960" />
+              <mxPoint x="930" y="1890" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pii" value="redact PII +&#10;write chunks&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="orchestrator" target="pii-worker">
+          <mxGeometry x="0.9191" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="960" />
+              <mxPoint x="930" y="2100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-treg-tmeta" value="CRUD processing records&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.6818;exitPerimeter=0;entryX=0.0;entryY=0.3684;entryPerimeter=0;" edge="1" parent="1" source="temp-reg-service" target="temp-meta-store">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-temp-treg" value="object created&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.1304;exitPerimeter=0;entryX=1.0;entryY=0.9091;entryPerimeter=0;" edge="1" parent="1" source="temp-store" target="temp-reg-service">
+          <mxGeometry x="0.5285" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1560" y="1590" />
+              <mxPoint x="1560" y="1325" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pdf-ocr" value="fallback to OCR&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.5;exitY=0.0;exitPerimeter=0;entryX=0.5;entryY=1.0;entryPerimeter=0;" edge="1" parent="1" source="pdf-worker" target="ocr-worker">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-ocr-temp" value="write chunks&#10;[s3 put]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.2609;entryPerimeter=0;" edge="1" parent="1" source="ocr-worker" target="temp-store">
+          <mxGeometry x="0.5192" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1400" y="1450" />
+              <mxPoint x="1400" y="1620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pdf-temp" value="write chunks&#10;[s3 put]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.4412;exitPerimeter=0;entryX=0.0;entryY=0.5217;entryPerimeter=0;" edge="1" parent="1" source="pdf-worker" target="temp-store">
+          <mxGeometry x="0.3143" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-docx-temp" value="write chunks&#10;[s3 put]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2333;exitPerimeter=0;entryX=0.0;entryY=0.7826;entryPerimeter=0;" edge="1" parent="1" source="docx-worker" target="temp-store">
+          <mxGeometry x="-0.6087" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1420" y="1850" />
+              <mxPoint x="1420" y="1740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pii-temp" value="reads chunks, writes&#10;anonymized chunks&#10;[s3 api]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2105;exitPerimeter=0;entryX=0.0;entryY=0.913;entryPerimeter=0;" edge="1" parent="1" source="pii-worker" target="temp-store">
+          <mxGeometry x="0.12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1480" y="2045" />
+              <mxPoint x="1480" y="1770" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pii-store" value="write placeholder&#10;mapping&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5526;exitPerimeter=0;entryX=0.0;entryY=0.7647;entryPerimeter=0;" edge="1" parent="1" source="pii-worker" target="pii-store">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-processed-embed" value="document.processed&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="processed-store" target="slice-embed">
+          <mxGeometry x="0.35" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

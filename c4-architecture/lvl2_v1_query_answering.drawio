@@ -1,0 +1,242 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="lvl2-query" name="L2 Query answering streaming">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1520" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;C4 Level 2 - Query, answer, and streaming (v1, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-18&lt;br&gt;Requirements: FR-03 to FR-07, NFR-01, NFR-02, NFR-03, NFR-05 to NFR-08&lt;br&gt;ADRs: none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=18;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-employee" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Employee&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• asks questions&lt;br&gt;• reads streamed answers" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="650" y="134" width="220" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-compliance" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Compliance officer&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• requests audit trails" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="930" y="134" width="220" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-engineer" value="&lt;span style=&quot;color:#ffffff;font-weight:bold&quot;&gt;Engineer&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• defines policies&lt;br&gt;• reviews answers" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="134" width="220" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b&gt;Enterprise RAG knowledge assistant&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=3;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;container=1;collapsible=0;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="1720" height="760" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-ui" value="&lt;b&gt;Web app UI&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="40" width="1640" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="200" width="1640" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="560" width="1640" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="web-ui" value="&lt;b&gt;Web Application&lt;/b&gt;&lt;br&gt;• asks questions in the browser&lt;br&gt;• shows streamed answers with citations&lt;br&gt;• serves audit trails and review tools&lt;br&gt;[web ui]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-ui">
+          <mxGeometry x="480" y="30" width="440" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="api-gateway" value="&lt;b&gt;API gateway&lt;/b&gt;&lt;br&gt;• streams answer tokens to the browser&lt;br&gt;• cancels streams on disconnect&lt;br&gt;• enforces per-user rate limits&lt;br&gt;[api gateway]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-ui">
+          <mxGeometry x="980" y="30" width="480" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="query-service" value="&lt;b&gt;Query, answer, and streaming service&lt;/b&gt;&lt;br&gt;• redacts personal data from questions&lt;br&gt;• retrieves relevant passages with permission filtering, refusing permission-denied queries&lt;br&gt;• builds the context and prompt from retrieved passages&lt;br&gt;• generates cited answers or an insufficient-context response on retrieval outage, model timeout, or budget exhaustion&lt;br&gt;• verifies answers with a retrieve → verify → answer loop, one tool call, and tool registration&lt;br&gt;• filters prompts and outputs against injection&lt;br&gt;• reads audit trails for the compliance officer&lt;br&gt;[service]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="920" y="40" width="680" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="search-index" value="&lt;b&gt;Search index&lt;/b&gt;&lt;br&gt;• keeps passages, keywords, permissions, and the embedding cache&lt;br&gt;[vector db]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="60" y="40" width="600" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="audit-store" value="&lt;b&gt;Audit store&lt;/b&gt;&lt;br&gt;• keeps answers, sources, requesters, model and prompt versions, and token usage&lt;br&gt;[audit store]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="920" y="40" width="680" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-embed" value="&lt;b&gt;Embedding model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;makes text searchable by meaning" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1250" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-rerank" value="&lt;b&gt;Reranking model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;orders results by relevance" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1250" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-gen" value="&lt;b&gt;Text generation model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;writes answers based on source evidence" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1250" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-idp" value="&lt;b&gt;Corporate identity provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;authenticates users and provides entitlements" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="1250" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-siem" value="&lt;b&gt;SIEM / security monitoring&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;collects audit and security events" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1250" width="310" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1410" width="900" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="20" width="90" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="Software system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="115" y="20" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="shape=mxgraph.c4.external;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="245" y="20" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-src" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="legend-1">
+          <mxGeometry x="395" y="40" width="30" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-tgt" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="legend-1">
+          <mxGeometry x="475" y="40" width="30" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-src" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="legend-1">
+          <mxGeometry x="550" y="40" width="30" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-tgt" style="rounded=0;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="legend-1">
+          <mxGeometry x="630" y="40" width="30" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="520" y="35" width="60" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="675" y="35" width="60" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1" source="legend-sync-src" target="legend-sync-tgt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1" source="legend-async-src" target="legend-async-tgt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-ask" value="POST /questions&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.773;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.773;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="actor-employee" target="web-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="450" />
+              <mxPoint x="900" y="450" />
+            </Array>
+            <mxPoint x="820" y="374" as="sourcePoint" />
+            <mxPoint x="900" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-stream" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;exitX=0.818;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="actor-employee">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="920" y="500" as="sourcePoint" />
+            <mxPoint x="870" y="374" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl-e-stream" value="stream answer tokens&#10;[sse]" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#ffffff;fontSize=11;" vertex="1" connectable="0" parent="e-stream">
+          <mxGeometry x="0.5" y="0.5" relative="1" as="geometry">
+            <mxPoint x="40" y="-40" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-audit-request" value="request audit trail&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.864;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="actor-compliance" target="web-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="490" />
+              <mxPoint x="940" y="490" />
+            </Array>
+            <mxPoint x="1040" y="374" as="sourcePoint" />
+            <mxPoint x="940" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-engineer" value="define policies and review answers&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.364;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.429;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="actor-engineer" target="web-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1290" y="530" />
+              <mxPoint x="1000" y="530" />
+            </Array>
+            <mxPoint x="1290" y="374" as="sourcePoint" />
+            <mxPoint x="1000" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-forward" value="forward question&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=1;exitY=0.571;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.571;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="web-ui" target="api-gateway">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="540" />
+            </Array>
+            <mxPoint x="1000" y="540" as="sourcePoint" />
+            <mxPoint x="1060" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-stream-back" value="stream answer tokens&#10;[sse]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0;exitY=0.286;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.286;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="web-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="520" />
+            </Array>
+            <mxPoint x="1060" y="520" as="sourcePoint" />
+            <mxPoint x="1000" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-query" value="ask question or pull audit trail&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.333;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.324;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="api-gateway" target="query-service">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1220" y="570" as="sourcePoint" />
+            <mxPoint x="1220" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-read-index" value="read permitted passages&#10;[db query]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0;exitY=0.72;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="search-index">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="965" y="850" />
+              <mxPoint x="965" y="1080" />
+            </Array>
+            <mxPoint x="1000" y="850" as="sourcePoint" />
+            <mxPoint x="740" y="1080" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-write-audit" value="write answer records&#10;[queue message]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.588;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.588;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="audit-store">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1400" y="920" as="sourcePoint" />
+            <mxPoint x="1400" y="1030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-read-audit" value="read answer records&#10;[sql]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0.882;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.882;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="audit-store">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1600" y="920" as="sourcePoint" />
+            <mxPoint x="1600" y="1030" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-question" value="embed question&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=0;exitY=0.92;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="ext-embed">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="900" />
+              <mxPoint x="980" y="1175" />
+              <mxPoint x="195" y="1175" />
+            </Array>
+            <mxPoint x="1000" y="900" as="sourcePoint" />
+            <mxPoint x="195" y="1250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-rerank" value="POST /rerank&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=1;exitY=0.94;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="ext-rerank">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1705" y="905" />
+              <mxPoint x="1705" y="1200" />
+              <mxPoint x="535" y="1200" />
+            </Array>
+            <mxPoint x="1680" y="905" as="sourcePoint" />
+            <mxPoint x="535" y="1250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-gen" value="POST /generate&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=1;exitY=0.86;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="ext-gen">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1725" y="885" />
+              <mxPoint x="1725" y="1220" />
+              <mxPoint x="875" y="1220" />
+            </Array>
+            <mxPoint x="1680" y="885" as="sourcePoint" />
+            <mxPoint x="875" y="1250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-idp" value="validate token and entitlements&#10;[http]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=1;exitY=0.84;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="ext-idp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1735" y="880" />
+              <mxPoint x="1735" y="1240" />
+              <mxPoint x="1215" y="1240" />
+            </Array>
+            <mxPoint x="1680" y="880" as="sourcePoint" />
+            <mxPoint x="1215" y="1250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-siem" value="export audit events&#10;[event stream]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;labelBackgroundColor=#ffffff;fontSize=11;align=left;exitX=1;exitY=0.82;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.273;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="query-service" target="ext-siem">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1745" y="875" />
+              <mxPoint x="1745" y="1280" />
+              <mxPoint x="1710" y="1280" />
+            </Array>
+            <mxPoint x="1680" y="875" as="sourcePoint" />
+            <mxPoint x="1710" y="1280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

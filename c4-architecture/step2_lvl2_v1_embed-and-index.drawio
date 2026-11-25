@@ -1,0 +1,179 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="embed-and-index" name="Embed and index">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1560" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 2 - Embed and index (step 2, v1, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Requirements: FR-02, FR-03, FR-04, NFR-03, NFR-04, NFR-06, NFR-07&lt;br&gt;Flow: processed store → indexing coordinator → glossary enrichment → embedding worker → index writer → vector DB / keyword index / parent store&lt;br&gt;ADRs: embedding model and hosting (self-hosted vs API), vector DB choice - none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1400" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b style=&quot;font-size:15px&quot;&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;verticalAlign=top;align=center;spacingTop=6;container=1;collapsible=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="480" y="100" width="1200" height="1320" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="60" width="420" height="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="740" y="60" width="420" height="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="builder" value="&lt;b style=&quot;font-size:15px&quot;&gt;Glossary builder&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: batch job]&lt;/span&gt;&lt;br&gt;• seeds the glossary: an LLM reads the corpus in batches and extracts acronyms, internal codes and one-sentence definitions&lt;br&gt;• rejects a definition unless it appears within a 2-sentence window in the source text&lt;br&gt;• imports existing ontologies and dictionaries; accepts crowd-sourced corrections from failure logs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="40" width="340" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="coord" value="&lt;b style=&quot;font-size:15px&quot;&gt;Indexing coordinator&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• consumes document.processed events from the processed store&lt;br&gt;• reads permissions, type and content hash from the document metadata store&lt;br&gt;• skips unchanged documents (idempotency key: document id + content hash)&lt;br&gt;• on reprocessing, removes the stale chunks of that document from every index" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="240" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="enrich" value="&lt;b style=&quot;font-size:15px&quot;&gt;Glossary enrichment worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• reads the anonymized chunks of the document from the processed store&lt;br&gt;• adds glossary definitions to chunks that contain acronyms; the original text stays untouched" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="470" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="embed" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• embeds the enriched child chunks in batches&lt;br&gt;• reuses cached vectors for unchanged chunks (costly step is skipped)&lt;br&gt;• splits chunks above the model token limit (fixed size + 10% overlap)&lt;br&gt;• stamps every vector with the model name and version" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="640" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="writer" value="&lt;b style=&quot;font-size:15px&quot;&gt;Index writer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• writes each child chunk once: vector + metadata (document id, parent id, section path, tenant, allowed roles, document type)&lt;br&gt;• writes the same chunk text to the keyword index for BM25&lt;br&gt;• stores parent sections by parent id for small-to-big retrieval&lt;br&gt;• keeps metadata within the vector DB size limit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="840" width="340" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="gloss" value="&lt;b style=&quot;font-size:15px&quot;&gt;Glossary store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• acronym / abbreviation → definition and synonyms, O(1) lookup&lt;br&gt;• written by the glossary builder; also read at query time by the retrieval worker&lt;br&gt;• lifecycle: kept, entries versioned; corrections replace older definitions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="40" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="cache" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding cache&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• chunk content hash + model version → vector&lt;br&gt;• lifecycle: entries are dropped when the embedding model changes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="640" width="340" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="vec" value="&lt;b style=&quot;font-size:15px&quot;&gt;Vector database&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: vector database]&lt;/span&gt;&lt;br&gt;• child-chunk vectors plus filterable metadata (tenant, allowed roles, document id, parent id)&lt;br&gt;• ANN index (HNSW): tune connections per node, build-time and query-time search width&lt;br&gt;• encrypted at rest; EU / Switzerland region; tenant isolation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="840" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="es" value="&lt;b style=&quot;font-size:15px&quot;&gt;Keyword search index&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: search engine]&lt;/span&gt;&lt;br&gt;• BM25 index of the same child chunks with the same permission metadata" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="1000" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="parent" value="&lt;b style=&quot;font-size:15px&quot;&gt;Parent chunk store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• parent sections by parent id (the &quot;big&quot; part of small-to-big)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="1110" width="340" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" value="&lt;b style=&quot;font-size:15px&quot;&gt;LLM provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;extracts acronyms and definitions for the glossary builder (private or API, see ADR)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="docmeta" value="&lt;b style=&quot;font-size:15px&quot;&gt;Document metadata store&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;step 1: permissions, type, status, content hash" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="proc" value="&lt;b style=&quot;font-size:15px&quot;&gt;Processed document store&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;step 1: anonymized chunks (Markdown text + JSON metadata)&lt;br&gt;emits document.processed" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="510" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="embmodel" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding model&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;private endpoint (e.g. SageMaker / ECS) or API, decided in an ADR&lt;br&gt;picked by Recall@10 and MRR on the golden set" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="810" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1000" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="34" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="System boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="72" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="110" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-ui" value="UI / API container" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="148" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-service" value="Service / worker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="186" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-store" value="Data store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="224" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync call [http / api]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="266" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async [event / queue]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="304" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-jump-text" value="arc = lines cross, not connected" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="342" width="310" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="278" as="sourcePoint" />
+            <mxPoint x="135" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="316" as="sourcePoint" />
+            <mxPoint x="135" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+
+        <!-- ============ EDGES (explicit waypoints; data movers are labels, not boxes) ============ -->
+        <mxCell id="e-bld-llm" value="extract acronyms +&#10;definitions&#10;[https]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.375;exitPerimeter=0;entryX=1.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="builder" target="llm">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-proc-coord" value="document.processed&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.15;exitPerimeter=0;entryX=0.0;entryY=0.8235;entryPerimeter=0;" edge="1" parent="1" source="proc" target="coord">
+          <mxGeometry x="-0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-coord-meta" value="read permissions + hash&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.2941;exitPerimeter=0;entryX=1.0;entryY=0.5556;entryPerimeter=0;" edge="1" parent="1" source="coord" target="docmeta">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-coord-enrich" value="enrich document&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.2353;exitY=1.0;exitPerimeter=0;entryX=0.2353;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="coord" target="enrich">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-enrich-proc" value="read chunks&#10;[s3 get]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.3636;exitPerimeter=0;entryX=1.0;entryY=0.8;entryPerimeter=0;" edge="1" parent="1" source="enrich" target="proc">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-enrich-embed" value="enriched chunks&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.2353;exitY=1.0;exitPerimeter=0;entryX=0.2353;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="enrich" target="embed">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-model" value="embed chunks (batch)&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.3571;exitPerimeter=0;entryX=1.0;entryY=0.3077;entryPerimeter=0;" edge="1" parent="1" source="embed" target="embmodel">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-writer" value="chunks + vectors&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.2353;exitY=1.0;exitPerimeter=0;entryX=0.2353;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="embed" target="writer">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-bld-gloss" value="seed / update definitions&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.375;exitPerimeter=0;entryX=0.0;entryY=0.4286;entryPerimeter=0;" edge="1" parent="1" source="builder" target="gloss">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-enrich-gloss" value="look up acronyms&#10;[key-value read]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.3636;exitPerimeter=0;entryX=0.0;entryY=0.7857;entryPerimeter=0;" edge="1" parent="1" source="enrich" target="gloss">
+          <mxGeometry x="-0.6667" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="670" />
+              <mxPoint x="1100" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-cache" value="reuse / store vectors&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.3214;exitPerimeter=0;entryX=0.0;entryY=0.45;entryPerimeter=0;" edge="1" parent="1" source="embed" target="cache">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-writer-vec" value="upsert vectors + metadata&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2222;exitPerimeter=0;entryX=0.0;entryY=0.3077;entryPerimeter=0;" edge="1" parent="1" source="writer" target="vec">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-writer-es" value="index chunk text&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="writer" target="es">
+          <mxGeometry x="-0.4468" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="1090" />
+              <mxPoint x="1160" y="1200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-writer-parent" value="store parent sections&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.7778;exitPerimeter=0;entryX=0.0;entryY=0.5714;entryPerimeter=0;" edge="1" parent="1" source="writer" target="parent">
+          <mxGeometry x="-0.5849" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1110" y="1140" />
+              <mxPoint x="1110" y="1310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,132 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="embed-and-index" name="Embed and index">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1380" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 2 - Embed and index (step 2, v2, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Requirements: FR-02, FR-03, FR-04, NFR-03, NFR-04, NFR-06, NFR-07&lt;br&gt;Flow: processed store → indexing coordinator → embedding worker (embedding provider) → index writer → vector DB / keyword index / chunk store. Runs on events, no user involved.&lt;br&gt;Notes: the glossary is static and applied to the query in step 3, never to chunks or embeddings. ADRs: embedding model and hosting, vector DB choice - none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1600" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b style=&quot;font-size:15px&quot;&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;verticalAlign=top;align=center;spacingTop=6;container=1;collapsible=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="480" y="100" width="1200" height="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="60" width="420" height="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="740" y="60" width="440" height="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="coord" value="&lt;b style=&quot;font-size:15px&quot;&gt;Indexing coordinator&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: service]&lt;/span&gt;&lt;br&gt;• consumes document.processed events from the processed document store&lt;br&gt;• reads permissions, type and content hash from the document metadata store&lt;br&gt;• skips unchanged documents (idempotency key: document id + content hash)&lt;br&gt;• asks the embedding worker to index the document; a reprocessed document is flagged so its old chunks are replaced&lt;br&gt;• writes the status &quot;indexed&quot; or &quot;index failed&quot; back to the metadata store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="40" width="340" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="embed" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• reads the anonymized chunks of the document from the processed store&lt;br&gt;• embeds the child chunks in batches, exactly as written (no glossary text is added)&lt;br&gt;• chunks arrive within the model token limit: step 1 already split large ones with overlap&lt;br&gt;• stamps every vector with model name and version; a model change triggers a full re-embed" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="340" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="writer" value="&lt;b style=&quot;font-size:15px&quot;&gt;Index writer&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• vector DB: one vector per child chunk + metadata (document id, parent id, section path, tenant, allowed roles, document type)&lt;br&gt;• keyword index: the same chunk text for BM25&lt;br&gt;• chunk store: chunk text with parent id, previous id, next id and section path&lt;br&gt;• on reprocessing deletes the old chunks of the document from all three first" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="580" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="meta" value="&lt;b style=&quot;font-size:15px&quot;&gt;Document metadata store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• document id, type, status, permissions, content hash (filled by step 1)&lt;br&gt;• read by the indexing coordinator, which writes the indexing status back&lt;br&gt;• lifecycle: kept for the life of the document record" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="40" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="proc" value="&lt;b style=&quot;font-size:15px&quot;&gt;Processed document store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: object storage]&lt;/span&gt;&lt;br&gt;• anonymized chunks: Markdown text + JSON metadata (filled by step 1)&lt;br&gt;• emits document.processed events&lt;br&gt;• lifecycle: kept while the source document is active; rebuilt on reprocessing" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="200" width="360" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="chunk" value="&lt;b style=&quot;font-size:15px&quot;&gt;Chunk store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• one record per chunk id: anonymized text, parent id, previous id, next id, section path&lt;br&gt;• the query side (step 3) reads the previous / next chunks and the parent section by key, in milliseconds&lt;br&gt;• lifecycle: replaced with the vector and keyword entries when a document is reprocessed or deleted" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="570" width="360" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="vec" value="&lt;b style=&quot;font-size:15px&quot;&gt;Vector database&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: vector database]&lt;/span&gt;&lt;br&gt;• child-chunk vectors plus filterable metadata (tenant, allowed roles, document id, parent id)&lt;br&gt;• ANN index (HNSW): tune connections per node, build-time and query-time search width&lt;br&gt;• encrypted at rest; EU / Switzerland region; tenant isolation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="740" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="es" value="&lt;b style=&quot;font-size:15px&quot;&gt;Keyword search index&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: search engine]&lt;/span&gt;&lt;br&gt;• BM25 index of the same child chunks with the same permission metadata" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="900" width="360" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="embmodel" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding model provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;private endpoint (e.g. SageMaker / ECS) or managed API, see ADR&lt;br&gt;picked by Recall@10 and MRR on the golden set" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="490" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="34" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="System boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="72" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="110" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-ui" value="UI / API container" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="148" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-service" value="Service / worker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="186" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-store" value="Data store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="224" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync call [http / api]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="266" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async [event / queue]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="304" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-jump-text" value="arc = lines cross, not connected" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="342" width="310" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="278" as="sourcePoint" />
+            <mxPoint x="135" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="316" as="sourcePoint" />
+            <mxPoint x="135" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+
+        <!-- ============ EDGES (explicit waypoints; data movers are labels, not boxes) ============ -->
+        <mxCell id="e-meta" value="read permissions + hash,&#10;write status&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.1739;exitPerimeter=0;entryX=0.0;entryY=0.3077;entryPerimeter=0;" edge="1" parent="1" source="coord" target="meta">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-proc-coord" value="document.processed&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.1176;exitPerimeter=0;entryX=1.0;entryY=0.8696;entryPerimeter=0;" edge="1" parent="1" source="proc" target="coord">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-coord-embed" value="index document&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.5;exitY=1.0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="coord" target="embed">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-proc" value="read chunks&#10;[s3 get]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.4706;exitPerimeter=0;entryX=0.0;entryY=0.6471;entryPerimeter=0;" edge="1" parent="1" source="embed" target="proc">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-model" value="embed chunks (batch)&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.2941;exitPerimeter=0;entryX=1.0;entryY=0.4615;entryPerimeter=0;" edge="1" parent="1" source="embed" target="embmodel">
+          <mxGeometry x="0.1538" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-embed-writer" value="chunk ids + vectors&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.5;exitY=1.0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="embed" target="writer">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-w-chunk" value="write chunk text +&#10;prev / next / parent ids&#10;[key-value write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.0769;exitPerimeter=0;entryX=0.0;entryY=0.2857;entryPerimeter=0;" edge="1" parent="1" source="writer" target="chunk">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-w-vec" value="upsert vectors +&#10;metadata&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5128;exitPerimeter=0;entryX=0.0;entryY=0.3077;entryPerimeter=0;" edge="1" parent="1" source="writer" target="vec">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-w-es" value="index chunk text&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.9231;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="writer" target="es">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

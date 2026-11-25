@@ -1,0 +1,171 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="retrieve-rerank-generate-cite" name="Retrieve rerank generate cite">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1285" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 2 - Retrieve, rerank, generate and cite (step 3, v1, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Requirements: FR-03, FR-04, FR-05, FR-06, FR-07, NFR-01, NFR-03, NFR-05, NFR-06, NFR-08&lt;br&gt;Flow: query message → redact PII + permission check → hybrid search → rerank → context + prompt → LLM → verify → cited answer events&lt;br&gt;ADRs: reranker (API vs self-hosted), LLM hosting - none accepted yet" style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1400" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b style=&quot;font-size:15px&quot;&gt;Enterprise RAG knowledge assistant&lt;/b&gt;&lt;br&gt;[Software System]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;verticalAlign=top;align=center;spacingTop=6;container=1;collapsible=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="480" y="100" width="1240" height="1045" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="&lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="60" width="460" height="945" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="&lt;b&gt;Repositories (DBs)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="sys-container">
+          <mxGeometry x="780" y="60" width="420" height="945" as="geometry" />
+        </mxCell>
+        <mxCell id="retrieve" value="&lt;b style=&quot;font-size:15px&quot;&gt;Retrieve &amp;amp; rerank worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• redacts personal data in the question (regex + NER, no LLM) and swaps names for placeholders such as &amp;lt;Person_1&amp;gt;&lt;br&gt;• filters prompt-injection patterns in the input; resolves follow-ups from structured session memory (entities, intents, topics)&lt;br&gt;• validates the caller's roles and tenant from the JWT claims; refuses queries the user may not run&lt;br&gt;• expands acronyms with the glossary: BM25 gets the expanded terms, the embedding gets the definitions&lt;br&gt;• hybrid search: BM25 + dense vector search in parallel, both filtered by tenant and allowed roles, fused into one list&lt;br&gt;• reranks the top k with a cross-encoder (reranking provider) and keeps the best chunk per parent section&lt;br&gt;• fallback: below the score threshold, rewrites the query once with the LLM and retries; still low → insufficient context&lt;br&gt;• latency budget (notes): glossary lookup and BM25 ~1 ms, query embedding 200-800 ms, rerank 300-500 ms; NFR-01 wants P95 first token ≤ 3 s" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="40" width="380" height="540" as="geometry" />
+        </mxCell>
+        <mxCell id="generate" value="&lt;b style=&quot;font-size:15px&quot;&gt;Generate &amp;amp; cite worker&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: worker]&lt;/span&gt;&lt;br&gt;• builds the context small-to-big: matched chunk + 1 before + 1 after + parent header, within the prompt context budget; duplicates and overlaps removed&lt;br&gt;• assembles the prompt: system instructions, domain rules, passages (placeholders only, no PII re-hydration)&lt;br&gt;• generates a cited answer with inline [1], [2] references, or an explicit &quot;confidence: insufficient context&quot; response&lt;br&gt;• agentic verify: a second LLM pass checks every claim against its cited passage; regenerates once or falls back to insufficient context&lt;br&gt;• filters the output, counts tokens, stops when a cancel event arrives&lt;br&gt;• publishes token, citation, done and error events; writes the audit record" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-backend">
+          <mxGeometry x="40" y="660" width="380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="gloss" value="&lt;b style=&quot;font-size:15px&quot;&gt;Glossary store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• acronym / abbreviation → definition and synonyms, O(1) lookup (filled by step 2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="40" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mem" value="&lt;b style=&quot;font-size:15px&quot;&gt;Session memory store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• structured memory per chat id: entities, intents, topics - not the full conversation&lt;br&gt;• lifecycle: expires with the chat session" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="158" width="340" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pii" value="&lt;b style=&quot;font-size:15px&quot;&gt;PII mapping store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• maps names in questions to placeholders such as &amp;lt;Person_1&amp;gt; (filled by step 1)&lt;br&gt;• identity vault, access-restricted" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="276" width="340" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="vec" value="&lt;b style=&quot;font-size:15px&quot;&gt;Vector database&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: vector database]&lt;/span&gt;&lt;br&gt;• child-chunk vectors + permission metadata (filled by step 2)&lt;br&gt;• dense search with metadata filters (tenant, allowed roles)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="394" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="es" value="&lt;b style=&quot;font-size:15px&quot;&gt;Keyword search index&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: search engine]&lt;/span&gt;&lt;br&gt;• BM25 over the same child chunks with the same permission metadata (filled by step 2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="512" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="parent" value="&lt;b style=&quot;font-size:15px&quot;&gt;Parent chunk store&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: key-value store]&lt;/span&gt;&lt;br&gt;• parent sections and ordered child chunks for small-to-big context (filled by step 2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="670" width="340" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="audit" value="&lt;b style=&quot;font-size:15px&quot;&gt;Audit log&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;color:#555555&quot;&gt;[Container: database]&lt;/span&gt;&lt;br&gt;• append-only record of every answer: redacted question, requester, retrieved sources, model + prompt version, verification result&lt;br&gt;• lifecycle: kept per compliance retention policy (to be defined)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=12;align=left;verticalAlign=top;" vertex="1" parent="grp-repos">
+          <mxGeometry x="40" y="775" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="bff" value="&lt;b style=&quot;font-size:15px&quot;&gt;BFF (step 4)&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;creates the query message for each question, passes JWT claims (roles, tenant)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="190" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="embmodel" value="&lt;b style=&quot;font-size:15px&quot;&gt;Embedding model&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;embeds the query and the glossary definitions (same model as step 2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rerank" value="&lt;b style=&quot;font-size:15px&quot;&gt;Reranking provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;cross-encoder reranker: managed API or self-hosted (e.g. BGE Reranker), see ADR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="410" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" value="&lt;b style=&quot;font-size:15px&quot;&gt;LLM provider&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;query rewrite, answer generation and verification; private or API, see ADR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="260" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="edge" value="&lt;b style=&quot;font-size:15px&quot;&gt;Edge streaming service (step 4)&lt;/b&gt;&lt;br&gt;[Software System]&lt;br&gt;streams events to the browser over SSE; sends cancel on client disconnect" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="910" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-1" value="&lt;b&gt;Legend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=8;spacingTop=2;container=1;collapsible=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1070" width="340" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-person" value="Person" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="34" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-system" value="System boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F4F8FD;strokeColor=#6C8EBF;strokeWidth=2;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="72" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-external" value="External system" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="110" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-ui" value="UI / API container" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="148" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-service" value="Service / worker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="186" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-swatch-store" value="Data store" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#666666;fontSize=10;align=center;verticalAlign=middle;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="224" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-sync-text" value="sync call [http / api]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="266" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-async-text" value="async [event / queue]" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="150" y="304" width="180" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-jump-text" value="arc = lines cross, not connected" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;" vertex="1" parent="legend-1">
+          <mxGeometry x="15" y="342" width="310" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-e-sync" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="278" as="sourcePoint" />
+            <mxPoint x="135" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-e-async" style="html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;" edge="1" parent="legend-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="316" as="sourcePoint" />
+            <mxPoint x="135" y="316" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+
+        <!-- ============ EDGES (explicit waypoints; data movers are labels, not boxes) ============ -->
+        <mxCell id="e-bff" value="question + JWT claims&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.0;entryY=0.0741;entryPerimeter=0;" edge="1" parent="1" source="bff" target="retrieve">
+          <mxGeometry x="-0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-emb" value="embed query +&#10;definitions&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.2778;exitPerimeter=0;entryX=1.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="embmodel">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-rerank" value="rerank top k&#10;[http]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.4815;exitPerimeter=0;entryX=1.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="rerank">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-rewrite" value="rewrite query (fallback)&#10;[https]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.6852;exitPerimeter=0;entryX=1.0;entryY=0.0857;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="llm">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-llm" value="generate + verify&#10;[https, streaming]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.1739;exitPerimeter=0;entryX=1.0;entryY=0.9143;entryPerimeter=0;" edge="1" parent="1" source="generate" target="llm">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-events" value="token / citation /&#10;done / error&#10;[event stream]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0;exitY=0.4783;exitPerimeter=0;entryX=1.0;entryY=0.2;entryPerimeter=0;" edge="1" parent="1" source="generate" target="edge">
+          <mxGeometry x="0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-cancel" value="cancel on disconnect&#10;[event]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.8;exitPerimeter=0;entryX=0.0;entryY=0.7391;entryPerimeter=0;" edge="1" parent="1" source="edge" target="generate">
+          <mxGeometry x="-0.3077" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-pass" value="ranked passages, or denied /&#10;insufficient context&#10;[queue]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;dashPattern=5 3;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.2632;exitY=1.0;exitPerimeter=0;entryX=0.2632;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="generate">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-r-gloss" value="expand acronyms&#10;[key-value read]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.0741;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="gloss">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-r-mem" value="read / update session memory&#10;[key-value read/write]" style="rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2926;exitPerimeter=0;entryX=0.0;entryY=0.4;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="mem">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-r-pii" value="name → placeholder lookup&#10;[key-value read]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.5111;exitPerimeter=0;entryX=0.0;entryY=0.4;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="pii">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-r-vec" value="dense search + filters&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.7296;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="vec">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-r-es" value="BM25 search + filters&#10;[api call]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.9481;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="retrieve" target="es">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-g-parent" value="fetch context chunks&#10;[key-value read]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.2174;exitPerimeter=0;entryX=0.0;entryY=0.5;entryPerimeter=0;" edge="1" parent="1" source="generate" target="parent">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-g-audit" value="write audit record&#10;[db write]" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=1.0;exitY=0.6739;exitPerimeter=0;entryX=0.0;entryY=0.3077;entryPerimeter=0;" edge="1" parent="1" source="generate" target="audit">
+          <mxGeometry x="0.0" relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
