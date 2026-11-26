@@ -15,7 +15,7 @@ This command does **not** choose AWS, Azure, or Kubernetes services. After the A
 - `ARCHITECTURE.md`
 - `ADR/README.md`
 - Every `ADR/NNNN-*.md`
-- `c4-architecture/README.md` — the C4 index, for linking or naming an existing drawing.
+- `README.md` — the C4 index table, for linking or naming an existing drawing.
 
 If these disagree, existing ADRs win. Report the conflict before writing anything.
 

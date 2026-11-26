@@ -13,7 +13,7 @@ You are invoked by `/create-c4` in a draw → review → fix loop. There is no s
 
 ## Read first
 
-- `c4-architecture/README.md` — the canonical drawing standard, naming, index, Level 3 checklist, and the review checklist (the mechanical rules you verify from the XML).
+- `.claude/commands/create-c4.md` — the canonical drawing standard, naming, gates, and the review checklist (the mechanical rules you verify from the XML); the drawing index is the C4 table in `README.md`.
 - `REQUIREMENTS.md`
 - `ARCHITECTURE.md`
 - `ADR/README.md` and every accepted ADR.
@@ -34,13 +34,13 @@ A draw.io file is an `<mxfile>` with one or more `<diagram>` pages. Inside a pag
 - An edge label may be the edge's own `value` or a child cell with `style` containing `edgeLabel`.
 - The `id` values are the stable handles for review findings.
 
-Read the XML, reconstruct the visual order from geometry, and check the rules below. You perform the mechanical checks yourself from the XML — go through the review checklist in `c4-architecture/README.md` first, then the semantic dimensions below. There is no validator report to expect.
+Read the XML, reconstruct the visual order from geometry, and check the rules below. You perform the mechanical checks yourself from the XML — go through the review checklist in `.claude/commands/create-c4.md` first, then the semantic dimensions below. There is no validator report to expect.
 
 ## Review dimensions
 
 ### 0. Mechanical checklist — blocking
 
-Work through the review checklist in `c4-architecture/README.md` and verify each item from the XML by hand: file naming, one `<mxfile>`/one `<diagram>`, unique cell ids, edge endpoints and waypoints, title block, Level 1 ids/order/shapes/colours/type tags/bullets/edge directions/line styles/legend, Level 2/3 bands, `[technology]` and `[protocol]` tags, business bullets, vendor leakage, queue-on-edge, orphan boxes, overlapping boxes, edge crossings, edges through boxes. Report geometry you cannot verify rather than guessing.
+Work through the review checklist in `.claude/commands/create-c4.md` and verify each item from the XML by hand: file naming, one `<mxfile>`/one `<diagram>`, unique cell ids, edge endpoints and waypoints, title block, Level 1 ids/order/shapes/colours/type tags/bullets/edge directions/line styles/legend, Level 2/3 bands, `[technology]` and `[protocol]` tags, business bullets, vendor leakage, queue-on-edge, orphan boxes, overlapping boxes, edge crossings, edges through boxes. Report geometry you cannot verify rather than guessing.
 
 ## Review dimensions
 
@@ -48,11 +48,11 @@ Work through the review checklist in `c4-architecture/README.md` and verify each
 
 - Exactly one `<mxfile>` and one `<diagram>` page.
 - File name matches the level:
-  - Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate, 4 = stream and authorize).
+  - Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate).
   - Level 3: `lvl3_v<K>_<aws|azure|k8s>_<drawing_name>.drawio`.
 - The drawing name is lowercase snake_case and matches the index row.
 - The title block: at Level 1 only `C4 Level 1 - <system name>` (no version, status, date, requirements, or ADRs on the drawing — they live in the index). At Level 2 and 3 the title block names the level, drawing, version, status, date, requirements covered, and ADRs referenced.
-- The index row in `c4-architecture/README.md` matches the file: level, version, drawing, scope, requirements, ADRs, status, date.
+- The index row in `README.md` matches the file: level, version, drawing, scope, requirements, ADRs, status, date.
 - A `Confirmed` drawing is not overwritten. A revision uses a new version file and the old row is marked `Superseded by <file>`.
 - No PNG is claimed unless it exists; every PNG has its XML source.
 
@@ -112,7 +112,7 @@ Work through the review checklist in `c4-architecture/README.md` and verify each
 **Level 3:**
 
 - The Level 2 → Level 3 mapping matrix is present and complete. Every L2 element maps to one or more L3 components, or has a recorded reason for not applying.
-- The Level 3 completeness checklist in `c4-architecture/README.md` is fully covered: region and AZ, VPC/VNet and CIDR, public/private/isolated subnets, route tables, internet and NAT gateways, endpoints, peering, security groups/NSGs and rules, load balancer/API gateway, WAF, DNS and certificates, identity and IAM, secrets and keys, compute and autoscaling, model endpoints, object/relational/vector/search/cache/audit stores, backups and replication, observability and audit export, egress and on-prem paths.
+- The Level 3 completeness checklist in `.claude/commands/create-c4.md` is fully covered: region and AZ, VPC/VNet and CIDR, public/private/isolated subnets, route tables, internet and NAT gateways, endpoints, peering, security groups/NSGs and rules, load balancer/API gateway, WAF, DNS and certificates, identity and IAM, secrets and keys, compute and autoscaling, model endpoints, object/relational/vector/search/cache/audit stores, backups and replication, observability and audit export, egress and on-prem paths.
 - Every external-internet path, private path, and trust boundary is shown.
 - Encryption in transit and at rest is visible or annotated.
 - No item is skipped silently. An item that is not applicable has a note.

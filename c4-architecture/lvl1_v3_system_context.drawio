@@ -5,8 +5,8 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
-        <mxCell id="title" value="&lt;b style=&quot;font-size:16px&quot;&gt;C4 Level 1 - System context (v3, Draft)&lt;/b&gt;&lt;br&gt;Date: 2026-11-24&lt;br&gt;Scope: who uses the Enterprise RAG knowledge assistant and which external systems it depends on. Internals: see the step 1 / 2 / 3 level 2 diagrams." style="text;html=1;align=left;verticalAlign=top;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
-          <mxGeometry x="40" y="10" width="1700" height="60" as="geometry" />
+        <mxCell id="title" value="&lt;b&gt;C4 Level 1 - Enterprise RAG knowledge assistant&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;fontSize=18;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1700" height="30" as="geometry" />
         </mxCell>
         <mxCell id="actor-records" value="&lt;span style=&quot;color:#ffffff;font-weight:bold;font-size:15px&quot;&gt;Records administrator&lt;/span&gt;&lt;br&gt;[Person]&lt;br&gt;• uploads documents through the UI&lt;br&gt;• tracks ingestion status" style="shape=mxgraph.c4.person2;whiteSpace=wrap;html=1;fillColor=#1F4E79;strokeColor=#06315C;fontColor=#ffffff;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="380" y="110" width="260" height="240" as="geometry" />

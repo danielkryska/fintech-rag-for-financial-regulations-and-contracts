@@ -16,7 +16,7 @@ Read in this order:
 1. `REQUIREMENTS.md` — cite FR and NFR IDs, especially NFR-04 (private or local deployment).
 2. `ARCHITECTURE.md` — current summary, open decisions, and the well-architected lens.
 3. `ADR/README.md` and every `ADR/NNNN-*.md` — the decisions you must design within.
-4. `c4-architecture/README.md` — the C4 standard, index, and Level 3 checklist.
+4. `.claude/commands/create-c4.md` — the C4 standard and the Level 3 checklist.
 5. The confirmed Level 1 and Level 2 drawings in `c4-architecture/`.
 6. `infra/README.md` and `src/README.md` — planned layouts.
 
@@ -64,7 +64,7 @@ When asked to review, advise, or find gaps:
 
 You own the Level 3 platform-realisation drawings for the Kubernetes and portable target. Level 1 (system context) and Level 2 (container and business-flow slices) are system-wide, are confirmed before you start, and are not yours to change. `/create-c4` orchestrates the process and the confirmation gate.
 
-Read the confirmed Level 1 and Level 2 XML, the accepted ADRs, and the standard in `c4-architecture/README.md` before drawing. The canonical standard is `c4-architecture/README.md`; the rules below are the platform-specific summary, not a separate standard. If a behavior in Level 2 has no accepted ADR that fixes it on Kubernetes, report the missing decision and tell the user to run `/create-adr`; do not invent it in the drawing.
+Read the confirmed Level 1 and Level 2 XML, the accepted ADRs, and the standard in `.claude/commands/create-c4.md` before drawing. The canonical standard is `.claude/commands/create-c4.md`; the rules below are the platform-specific summary, not a separate standard. If a behavior in Level 2 has no accepted ADR that fixes it on Kubernetes, report the missing decision and tell the user to run `/create-adr`; do not invent it in the drawing.
 
 For each drawing:
 
@@ -73,7 +73,7 @@ For each drawing:
 - Overlay the full Kubernetes topology: cluster(s) and region/zone placement, node pools including a GPU pool if self-hosted, CNI and pod/service CIDRs, namespaces and tenant isolation, ingress and egress gateways, load balancer, NetworkPolicies, service mesh and mTLS if used, Pod Security Standards, RBAC and service accounts, secrets and External Secrets, storage classes and persistent volumes, StatefulSets, HPA/KEDA, PodDisruptionBudgets, topology spread and anti-affinity, model serving, image registry and supply chain, backup (for example Velero), observability (OpenTelemetry, Prometheus, Grafana, Loki), and every egress path. Nothing is skipped; if an item is not applicable, add a note.
 - Map every Level 2 element to a Kubernetes component. Return the mapping matrix; a Level 2 element that does not map needs a recorded reason.
 - Apply the adapted cloud-native pillars and call out the trade-offs that the drawing makes visible.
-- Check the drawing against the review checklist in `c4-architecture/README.md` (there is no static validator) and fix every Blocking and Major finding before returning.
+- Check the drawing against the review checklist in `.claude/commands/create-c4.md` (there is no static validator) and fix every Blocking and Major finding before returning.
 - Return the proposed C4 index row (level, version, drawing, file, scope, requirements, ADRs, status `Draft`) to `/create-c4`. The command writes the index and owns the final status; do not mark the drawing `Confirmed`.
 - The XML is the deliverable. Never fabricate a PNG. If a render is requested and the draw.io CLI is available, export it; otherwise ask the user to export.
 - Return the drawing path and the requirements and repositories it covers; `/create-c4` links it from the relevant ADR after confirmation.

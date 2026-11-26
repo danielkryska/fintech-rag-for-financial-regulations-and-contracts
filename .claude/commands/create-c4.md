@@ -7,17 +7,17 @@ argument-hint: "[lvl1|lvl2|lvl3|next] [drawing name] (optional)"
 
 You own one C4 drawing at a time and the gate around it: **draw → review → fix → re-review → user confirmation → next level**. You do not choose platform services for Level 1 or Level 2. Level 3 is drawn by the matching platform architect and reviewed through the same gate.
 
-The canonical rules, naming, index, and Level 3 checklist live in [`c4-architecture/README.md`](../../c4-architecture/README.md). Read it before drawing; this command does not replace it.
+**This command is the canonical C4 drawing standard**: rules, naming, gates, and the Level 3 checklist live here. The drawing index is the C4 table in [`README.md`](../../README.md). `c4-reviewer` and the platform architects read this file; do not maintain a competing standard elsewhere.
 
 ## 1. Read first
 
-- `c4-architecture/README.md` — the drawing standard, naming, index, and Level 3 checklist.
+- This command — the canonical drawing standard (sections 3–6 and 12) and the Level 3 checklist (section 11).
 - `REQUIREMENTS.md`
 - `ARCHITECTURE.md`
 - `ADR/README.md` and every accepted ADR.
 - The project walkthrough PDF in `ADR/`, including its hand-drawn flows. If the PDF has no text layer, render its pages to images first (for example with PyMuPDF `page.get_pixmap()` at 140–260 DPI, rotating landscape pages), then read the images.
 - `src/README.md`, `infra/README.md`.
-- Every existing `c4-architecture/*.drawio` and the index in `c4-architecture/README.md`.
+- Every existing `c4-architecture/*.drawio` and the index table in `README.md`.
 
 If documents disagree, the ADR wins. Report the conflict before drawing.
 
@@ -71,7 +71,7 @@ Propose the slice map before drawing. A typical map for this project:
 | Slice | Scope | Requirements | Repositories | Boundary interactions |
 | --- | --- | --- | --- | --- |
 
-Cover at least: document ingestion and processing; indexing and retrieval; query and answer generation; governance, audit, and evaluation. Split further only if a slice is too large to draw without crossings or too broad to review.
+The current map is three steps: step 1 document ingestion, step 2 embed and index, step 3 retrieve, generate, cite, stream, authorize. Split further only if a slice is too large to draw without crossings or too broad to review.
 
 Ask the user to confirm the slice map. Then, for each slice:
 
@@ -90,7 +90,7 @@ Do not use vendor, product, or cloud service names at Level 2 and do not select 
 
 ## 5. Draw the XML
 
-Follow the standard and the XML skeleton in `c4-architecture/README.md`.
+Follow the XML skeleton below.
 
 - One complete `<mxfile>` with exactly one `<diagram>` page.
 - Required IDs: `title`, `band-representation`, `band-business`, `band-repository`. Legend and note cells use ids starting `legend-` or `note-`.
@@ -100,9 +100,61 @@ Follow the standard and the XML skeleton in `c4-architecture/README.md`.
 - Write the file with the status `Draft` (in the title block at Level 2 and 3; Level 1 tracks status only in the index). Add or update its index row as `Draft`.
 - Do not create a PNG unless the draw.io CLI is available and the user asked for it. Never claim a render that does not exist.
 
+### File conventions
+
+- Drawings live in `c4-architecture/` — the only architecture drawing folder. There is no `ARCHITECTURE/` folder.
+- Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate). Level 3: `lvl3_v<K>_<technology>_<drawing_name>.drawio`, technology `aws`, `azure`, or `k8s`.
+- `<drawing_name>` is lowercase snake_case. One drawing per file, one `<diagram>` page per file.
+- The XML is the source of truth. A PNG is optional; never commit a PNG without its XML, and never claim a render that does not exist.
+- Versions are never overwritten once confirmed. A material change creates a new version file; the index marks the old row `Superseded by <file>`.
+- Status values: `Draft`, `In review`, `Confirmed`, `Superseded by <file>`.
+- Only the latest version of each drawing stays in `c4-architecture/`; superseded iterations are deleted after the newer version is committed (git history keeps them).
+
+### XML skeleton
+
+Use this shape for every drawing. The `title` ID is required by the review checklist. Level 2 uses one outer `sys-container` with three dashed no-fill groups inside it (`grp-ui`, `grp-backend`, `grp-repos`); Level 3 uses the three band IDs below.
+
+```xml
+<mxfile host="app.diagrams.net">
+  <diagram id="lvl2-query-answering" name="L2 Query and answer generation">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="C4 Level 2 - ..." style="text;html=1;align=left;verticalAlign=top;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="800" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sys-container" value="&lt;b&gt;System name&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;strokeWidth=3;verticalAlign=top;align=left;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="1520" height="680" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-ui" value="Web app UI" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;container=1;collapsible=0;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="40" width="1440" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-backend" value="Backend" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;container=1;collapsible=0;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="240" width="1440" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="grp-repos" value="Repositories (DBs)" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 4;fillColor=none;strokeColor=#666666;verticalAlign=top;align=left;container=1;collapsible=0;" vertex="1" parent="sys-container">
+          <mxGeometry x="40" y="520" width="1440" height="140" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+```
+
+Boxes inside a Level 2 group use `parent="grp-ui"`, `parent="grp-backend"`, or `parent="grp-repos"`. Level 3 boxes inside a band use `parent="band-representation"`, `parent="band-business"`, or `parent="band-repository"`. Edges use `parent="1"`, a `source`, a `target`, and waypoints in the edge `<mxGeometry>` when the route needs them. An edge carries its label either as its own non-empty `value` or in a child `edgeLabel` cell (use the child cell when the label needs an offset away from the line).
+
 ## 6. Check the mechanical rules
 
-There is no static validator. Before invoking the reviewer, go through the review checklist in `c4-architecture/README.md` yourself and fix what you find: file naming, one page, unique ids, edge endpoints, title block, Level 1 ids/order/shapes/colours/type tags/bullets/edge directions/line styles/legend, Level 2/3 bands, `[technology]` and `[protocol]` tags, business bullets, vendor leakage, queue-on-edge, orphan boxes, overlaps, crossings, edges through boxes. `c4-reviewer` re-checks all of them.
+There is no static validator. Before invoking the reviewer, go through the review checklist below yourself and fix what you find. `c4-reviewer` re-checks all of them.
+
+### Review checklist
+
+- File naming matches the level (`lvl1_v<K>_<name>.drawio`, `step<K>_lvl2_v<N>_<name>.drawio`, `lvl3_v<K>_<aws|azure|k8s>_<name>.drawio`); one `<mxfile>` with one `<diagram>` page; unique cell ids; every edge has a source, a target, and valid waypoints.
+- Title block: at Level 1 only `C4 Level 1 - <system name>`; at Level 2 and 3 the level, name, version, status, date, requirements, and ADRs.
+- Level 1: exactly one `system` cell; ids `actor-<name>`, `system`, `ext-<name>`; top-down order (actors above the system, externals below), each layer centered horizontally on the page's center axis; actors in a centered row with `mxgraph.c4.person2`, fill `#1F4E79`, and white labels (bold name, `[Person]`, responsibility bullets) vertically centered; the system with `mxgraph.c4.system`, fill `#DAE8FC`, thick solid border, `[Software System]`, and bullet points; externals with `mxgraph.c4.external`, fill `#F5F5F5`, solid border, and `[Software System]`; edges run only `actor → system` and `system → external`, routed orthogonally like circuit-board traces (right-angle paths, no diagonals); lines carry no text — solid = synchronous request, dashed = asynchronous request; a legend box shows the swatches and arrow samples; no requirement IDs, vendor names, or technology tags on the drawing.
+- Level 2: one outer system container (light blue, thick border, named after the system) holding three dashed no-fill groups in order (Web app UI, Backend, Repositories (DBs)); every box in exactly one group with a generic `[technology]` line at the end of its label; box labels are bold name / bullets / technology line; edge labels are two lines (action newline `[protocol]`); externals below the block; queues, streams, and brokers appear on the edge, never as boxes. Level 3: the three bands in order (Representation, Business logic, Repository); every box in exactly one band with a `[technology]` tag; business boxes list what they do as bullets; every edge label carries a `[protocol]` tag and an action description; queues, streams, and brokers appear on the edge, never as boxes.
+- No vendor or cloud service names at Level 1 and 2; no orphan boxes; no overlapping boxes; no edge crossings; no edge through an unrelated box.
 
 ## 7. Review/fix loop
 
@@ -128,26 +180,45 @@ After the review is clean:
 
 ## 9. Update the index
 
-In `c4-architecture/README.md`:
+The C4 index is the "C4 architecture" table in `README.md`:
 
-- Add or update the row: level, version, drawing, file link, scope, requirements, ADRs, status, confirmed date.
-- When a new version supersedes a confirmed one, keep the old row and set `Superseded by <file>`.
+- One row per current drawing: title (level, step, version), description, and file URL.
+- Only the latest version of each drawing stays in `c4-architecture/`; when a new version replaces an old one, replace the row (git history keeps the old file).
 - Do not invent rows for drawings that do not exist.
 - Do not mark a drawing `Confirmed` without the user's explicit approval.
 
 ## 10. Proceed to the next level
 
-- Level 1 confirmed → ask whether to proceed to Level 2. If yes, propose the slice map (step 4).
+- Level 1 confirmed → ask whether to proceed to Level 2. If yes, propose the slice map (section 4).
 - Level 2 confirmed → ask whether to proceed to Level 3. If yes, ask which platform and which slice, then invoke the matching platform architect.
 - Level 3 confirmed → stop and report what remains for the other platforms and slices.
 
 ## 11. Level 3 handoff
 
-- Invoke `architect-aws`, `architect-azure`, or `architect-k8s` with: the confirmed Level 1 and Level 2 files, the accepted ADRs, the C4 standard, the target slice, and the Level 3 completeness checklist.
+- Invoke `architect-aws`, `architect-azure`, or `architect-k8s` with: the confirmed Level 1 and Level 2 files, the accepted ADRs, this standard, the target slice, and the Level 3 completeness checklist below.
 - The architect writes `c4-architecture/lvl3_v<K>_<technology>_<slice>.drawio` and returns the Level 2 → Level 3 mapping, checklist coverage, and open decisions.
-- Check the review checklist in `c4-architecture/README.md`, then run `c4-reviewer`, the fix loop, and the same user confirmation gate.
+- Check the review checklist in section 6, then run `c4-reviewer`, the fix loop, and the same user confirmation gate.
 - The platform architect does not mark the drawing confirmed.
 - If the architect finds a missing high-level decision, route it to `/create-adr`; do not invent it.
+
+### Level 3 completeness checklist
+
+Use this checklist for every Level 3 drawing; add a note for any item that is not applicable.
+
+- [ ] Region(s) and AZ placement; DR region if the ADR requires it.
+- [ ] VPC/VNet, CIDR, subnets (public/private/isolated) with CIDR and AZ.
+- [ ] Route tables, internet gateway, NAT gateway, VPC endpoints/private endpoints, peering/hub.
+- [ ] Security groups/NSGs with ingress/egress rules; NACLs if used.
+- [ ] Load balancer/API gateway, WAF, CDN, DNS, TLS termination and certificates.
+- [ ] Identity provider, IAM roles/policies, workload identity, least privilege.
+- [ ] Secrets manager, KMS/Key Vault, encryption in transit and at rest.
+- [ ] Compute: containers/functions/VMs, autoscaling, GPU pool if self-hosted.
+- [ ] Queues/streams/topics named on edges, with DLQ, retention, encryption.
+- [ ] Object storage, relational DB, vector DB, search index, cache, audit store, backups, replication, retention/WORM.
+- [ ] Model endpoints (LLM, embedding, reranker), model access path, quotas.
+- [ ] Observability: logs, metrics, traces, audit export/SIEM, alerting.
+- [ ] Egress to external systems, proxy/egress firewall, on-prem connectivity.
+- [ ] Every Level 2 element mapped; every edge labelled with `[protocol] action`.
 
 ## 12. Rules you must not break
 

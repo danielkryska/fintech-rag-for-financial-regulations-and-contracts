@@ -37,8 +37,8 @@ test -d c4-architecture && test ! -d ARCHITECTURE
 1. `ADR/NNNN-*.md` — decisions. Highest authority.
 2. `ARCHITECTURE.md` — the summary and register.
 3. `REQUIREMENTS.md` — what must be true.
-4. `c4-architecture/README.md` — the C4 standard and index.
-5. `README.md` — landing page only.
+4. `.claude/commands/create-c4.md` — the canonical C4 drawing standard.
+5. `README.md` — landing page and the C4 index table.
 6. Subfolder READMEs — local layout and scope.
 
 `AGENTS.md` and `CLAUDE.md` only route; they must not contain rules that contradict the documents above.
@@ -60,15 +60,15 @@ If two sources disagree, the ADR wins and the lower source is corrected. If the 
 | DOC-09 | Terminology is consistent: the drawing folder is `c4-architecture/`; there is no `ARCHITECTURE/` folder and no link to one; "C4" is uppercase; "draw.io" is spelled consistently; Level 3 technology tokens in filenames are lowercase (`aws`, `azure`, `k8s`); no stale `kubernetes/` path or `template.md` reference. |
 | DOC-10 | `CLAUDE.md` imports `AGENTS.md`; `AGENTS.md` stays thin, routes to canonical documents, directs ADR creation to `/create-adr`, directs C4 creation to `/create-c4`, and neither duplicates nor contradicts the canonical documents. |
 | DOC-11 | No secrets, credentials, tokens, account IDs, or real personal data. Synthetic data only. |
-| DOC-12 | The canonical ADR template lives in `.claude/commands/create-adr.md`; ADR files use its fields and sections. The platform agents must not contain a competing template, and `ADR/template.md` must not exist. The canonical C4 standard lives in `c4-architecture/README.md`; agents and commands must not contain a competing drawing standard. |
-| DOC-13 | `c4-architecture/` exists with a README containing the drawing standard, file naming, process and gates, and the index. `ARCHITECTURE/` does not exist. The index has one row per C4 XML file and no stale rows. |
+| DOC-12 | The canonical ADR template lives in `.claude/commands/create-adr.md`; ADR files use its fields and sections. The platform agents must not contain a competing template, and `ADR/template.md` must not exist. The canonical C4 standard lives in `.claude/commands/create-c4.md`; agents and commands must not contain a competing drawing standard. |
+| DOC-13 | `c4-architecture/` exists and holds the current C4 drawings plus the walkthrough PDF; `ARCHITECTURE/` does not exist. The C4 index is the table in `README.md` with one row per C4 drawing file and no stale rows. |
 | DOC-14 | Requirement IDs cited by ADRs exist. A requirement affected by a decision is referenced; no ADR cites a nonexistent ID. |
 | DOC-15 | Each ADR's `## Well-architected assessment` covers operational excellence, security, reliability, performance efficiency, cost optimization, and sustainability. Each row has an impact and evidence, or an explicit `N/A` reason. `## Simplification check` names removed, merged, or deferred components and the simplest viable option. Material gaps are in Consequences → Follow-ups with severity and owner. |
-| DOC-16 | The platform agent files own only C4 Level 3 drawings for their target. They reference `/create-adr` for high-level decisions and `/create-c4` plus `c4-architecture/README.md` for the C4 process. They do not own Levels 1 or 2, do not contain an ADR template, and do not contain a competing drawing standard. |
+| DOC-16 | The platform agent files own only C4 Level 3 drawings for their target. They reference `/create-adr` for high-level decisions and `/create-c4` plus `.claude/commands/create-c4.md` for the C4 process. They do not own Levels 1 or 2, do not contain an ADR template, and do not contain a competing drawing standard. |
 | DOC-17 | `.claude/commands/create-adr.md` exists and contains the platform-agnostic scope gate, the ADR template, and the review/fix loop with `adr-reviewer` that asks which findings to fix and repeats until no Blocking or Major findings remain. |
-| DOC-18 | `.claude/commands/create-c4.md` exists and contains the draw → review → fix → user confirmation gate, the level sequence, and the Level 3 handoff. `.claude/agents/c4-reviewer.md` exists, is read-only, blocks confirmation on Blocking or Major findings, and performs the mechanical checks from the review checklist in `c4-architecture/README.md` (there is no static validator). |
-| DOC-19 | C4 naming and versioning: Level 1/2 files match `lvl<N>_v<K>_<drawing_name>.drawio`; Level 3 files match `lvl3_v<K>_<aws\|azure\|k8s>_<drawing_name>.drawio`; version numbers are not reused; confirmed versions are not overwritten; the index row matches the file's level, version, drawing name, and status. |
-| DOC-20 | Every `c4-architecture/*.drawio` is well-formed XML with one `<diagram>` page, and the mechanical rules of the review checklist in `c4-architecture/README.md` hold (naming, ids, title block, colours, shapes, type tags, edge directions, no crossings or overlaps), or the Blocking findings are reported for `/create-c4` to fix. The semantic review belongs to `c4-reviewer`; this pass checks presence, naming, indexing, and mechanical well-formedness. |
+| DOC-18 | `.claude/commands/create-c4.md` exists and contains the draw → review → fix → user confirmation gate, the level sequence, and the Level 3 handoff. `.claude/agents/c4-reviewer.md` exists, is read-only, blocks confirmation on Blocking or Major findings, and performs the mechanical checks from the review checklist in `.claude/commands/create-c4.md` (there is no static validator). |
+| DOC-19 | C4 naming and versioning: Level 1 files match `lvl1_v<K>_<drawing_name>.drawio` and Level 2 files match `step<K>_lvl2_v<N>_<drawing_name>.drawio`; Level 3 files match `lvl3_v<K>_<aws\|azure\|k8s>_<drawing_name>.drawio`; version numbers are not reused; confirmed versions are not overwritten; the index row matches the file's level, version, drawing name, and status. |
+| DOC-20 | Every `c4-architecture/*.drawio` is well-formed XML with one `<diagram>` page, and the mechanical rules of the review checklist in `.claude/commands/create-c4.md` hold (naming, ids, title block, colours, shapes, type tags, edge directions, no crossings or overlaps), or the Blocking findings are reported for `/create-c4` to fix. The semantic review belongs to `c4-reviewer`; this pass checks presence, naming, indexing, and mechanical well-formedness. |
 
 Self-scan note: this command file quotes the stale folder name and prohibited names. When applying DOC-09 and DOC-12, treat those occurrences as instructions, not content; do not flag this file for them.
 
@@ -77,7 +77,7 @@ Self-scan note: this command file quotes the stale folder name and prohibited na
 Safe to fix without asking, in `fix` mode:
 
 - Sync `ADR/README.md` and the `ARCHITECTURE.md` register from the ADR files.
-- Sync the `c4-architecture/README.md` index from the XML files and their title blocks.
+- Sync the C4 index table in `README.md` from the XML files and their title blocks.
 - Fix a broken relative link when the target is unambiguous.
 - Sort tables by ADR number or by C4 level and version; normalize dates to ISO; normalize status and scope values.
 - Fix stale terminology and folder names (`ARCHITECTURE/` to `c4-architecture/`, `kubernetes/` to `k8s/`).
@@ -106,11 +106,11 @@ Never:
 
 For each ADR file, extract the title, status, scope, date, and the one-line decision. Ensure both the ADR index and the `ARCHITECTURE.md` decision register have the row. When an ADR is `Superseded by ADR-NNNN`, keep the row and show the status. Remove only rows whose ADR file no longer exists, after confirming the deletion was intentional.
 
-For each `c4-architecture/*.drawio`, extract the level and version from the filename, and the level, drawing name, version, status, requirements, and ADRs from the title block. Ensure the C4 index has exactly one current row per drawing and version. Keep superseded rows with the status `Superseded by <file>`. Do not change a `Confirmed` status without explicit user approval.
+For each `c4-architecture/*.drawio`, extract the level and version from the filename, and the level, drawing name, version, status, requirements, and ADRs from the title block. Ensure the C4 index table in `README.md` has exactly one current row per drawing. Superseded versions are removed from the folder after the newer version is committed (git history keeps them). Do not change a `Confirmed` status without explicit user approval.
 
 ## 6. Run the mechanical C4 check
 
-For each `c4-architecture/*.drawio`, go through the review checklist in `c4-architecture/README.md` by hand: parse the XML, check the file naming, one `<mxfile>`/one `<diagram>`, unique cell ids, edge endpoints and waypoints, title block, Level 1 ids/order/shapes/colours/type tags/edge directions/line styles/legend, Level 2/3 bands, `[technology]` and `[protocol]` tags, business bullets, vendor leakage, queue-on-edge, orphan boxes, overlaps, crossings, and edges through boxes.
+For each `c4-architecture/*.drawio`, go through the review checklist in `.claude/commands/create-c4.md` by hand: parse the XML, check the file naming, one `<mxfile>`/one `<diagram>`, unique cell ids, edge endpoints and waypoints, title block, Level 1 ids/order/shapes/colours/type tags/edge directions/line styles/legend, Level 2/3 bands, `[technology]` and `[protocol]` tags, business bullets, vendor leakage, queue-on-edge, orphan boxes, overlaps, crossings, and edges through boxes.
 
 Report Blocking findings as DOC-20. Report Major findings for `/create-c4` and `c4-reviewer` to resolve; this pass does not waive them. If there are no C4 drawing files yet, state that the check is not applicable.
 

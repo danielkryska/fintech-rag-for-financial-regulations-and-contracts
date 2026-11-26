@@ -19,7 +19,7 @@ You review against the relevant well-architected framework: the AWS Well-Archite
 - `ARCHITECTURE.md`
 - `ADR/README.md`
 - Every `ADR/NNNN-*.md`
-- `c4-architecture/README.md` — the C4 standard and index.
+- `.claude/commands/create-c4.md` — the C4 standard; the index is the C4 table in `README.md`.
 - The confirmed Level 1 and Level 2 C4 drawings that the ADR links.
 - `AGENTS.md`
 

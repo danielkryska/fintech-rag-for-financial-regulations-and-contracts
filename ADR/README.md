@@ -2,7 +2,7 @@
 
 The list of high-level architecture decisions for this project. Each ADR records one platform-agnostic decision, the options considered, the well-architected trade-offs, and the consequences accepted.
 
-ADRs are for decisions that change the flow or create lasting commitment: retrieval architecture, grounding and citation model, tenancy and permissions, audit, evaluation, deployment topology class, a major library class, a SaaS category. Implementation detail and specific cloud service choices belong in [c4-architecture/](../c4-architecture/README.md) and the C4 Level 3 drawings, not here.
+ADRs are for decisions that change the flow or create lasting commitment: retrieval architecture, grounding and citation model, tenancy and permissions, audit, evaluation, deployment topology class, a major library class, a SaaS category. Implementation detail and specific cloud service choices belong in the C4 drawings in [c4-architecture/](../c4-architecture/), not here.
 
 ## Index
 
@@ -27,7 +27,7 @@ _No decisions yet. Run `/create-adr` to start._
 
 ## Drawings
 
-C4 diagrams do not live in this folder. They are owned by `/create-c4` and stored in [c4-architecture/](../c4-architecture/README.md) as draw.io XML, following the standard there.
+C4 diagrams do not live in this folder. They are owned by `/create-c4` and stored in [c4-architecture/](../c4-architecture/) as draw.io XML, following the standard in [.claude/commands/create-c4.md](../.claude/commands/create-c4.md).
 
 - A high-level, system-wide ADR links the confirmed C4 Level 1 or Level 2 drawing it explains once `/create-c4` has produced it (for example `step3_lvl2_v4_retrieve-generate-stream.drawio`). If none exists yet, the ADR names the drawing `/create-c4` must create. Do not embed C4 XML in the ADR.
 - A non-C4 decision sketch may be inline in the ADR as a fenced `xml` block containing a complete `<mxfile>` document, or a sidecar `NNNN-<drawing-name>.xml` linked from the ADR, with a render `NNNN-<drawing-name>.png` only when it exists.
