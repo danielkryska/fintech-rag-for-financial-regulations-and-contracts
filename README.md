@@ -20,15 +20,15 @@ The repository covers the full path from document ingestion to a governed answer
 
 ## C4 architecture
 
-The architecture follows the C4 model. All drawings are draw.io XML sources; the table below is the drawing index, and the drawing standard lives in [.claude/commands/create-c4.md](.claude/commands/create-c4.md). GitHub does not render `.drawio` files inline — open them in [diagrams.net](https://app.diagrams.net) (File → Open from → URL, with the file's raw link) or with the VS Code drawio extension. To show a diagram inline in this README, commit a PNG or SVG export next to its `.drawio` source.
+The architecture follows the C4 model. The table below is the drawing index — each PNG render is committed next to its `.drawio` source, and the drawing standard lives in [.claude/commands/create-c4.md](.claude/commands/create-c4.md). Open a `.drawio` file in [diagrams.net](https://app.diagrams.net) (File → Open from → URL, with the file's raw link) or with the VS Code drawio extension to see or edit the source diagram.
 
-| Title | Description | URL |
+| Title | Description | Diagram |
 | --- | --- | --- |
-| System context (Level 1, v3) | Who uses the assistant and which external systems it depends on | [lvl1_v3_system_context.drawio](c4-architecture/lvl1_v3_system_context.drawio) |
-| Document ingestion (Level 2 step 1, v6) | Upload, registration, hierarchical chunking, and the hand-off to embedding | [step1_lvl2_v6_document-ingestion.drawio](c4-architecture/step1_lvl2_v6_document-ingestion.drawio) |
-| Embed and index (Level 2 step 2, v2) | Event-driven embedding and index writes to the vector DB, keyword index, and chunk store | [step2_lvl2_v2_embed-and-index.drawio](c4-architecture/step2_lvl2_v2_embed-and-index.drawio) |
-| Retrieve, generate, cite, stream, authorize (Level 2 step 3, v4) | The question and answer path: retrieval, reranking, generation, citations, and SSE streaming | [step3_lvl2_v4_retrieve-generate-stream.drawio](c4-architecture/step3_lvl2_v4_retrieve-generate-stream.drawio) |
-| Project walkthrough (PDF) | Hand-drawn flows and the project walkthrough used as drawing input | [project 1 - rag knowledge assistant fo regulation docs-2026-11-14-19-06.pdf](c4-architecture/project%201%20-%20rag%20knowledge%20assistant%20fo%20regulation%20docs-2026-11-14-19-06.pdf) |
+| System context (Level 1, v3) | Who uses the assistant and which external systems it depends on | <img src="c4-architecture/lvl1_v3_system_context.png" alt="System context" width="480"><br><a href="c4-architecture/lvl1_v3_system_context.drawio">lvl1_v3_system_context.drawio</a> |
+| Document ingestion (Level 2 step 1, v6) | Upload, registration, hierarchical chunking, and the hand-off to embedding | <img src="c4-architecture/step1_lvl2_v6_document-ingestion.png" alt="Document ingestion" width="480"><br><a href="c4-architecture/step1_lvl2_v6_document-ingestion.drawio">step1_lvl2_v6_document-ingestion.drawio</a> |
+| Embed and index (Level 2 step 2, v2) | Event-driven embedding and index writes to the vector DB, keyword index, and chunk store | <img src="c4-architecture/step2_lvl2_v2_embed-and-index.png" alt="Embed and index" width="480"><br><a href="c4-architecture/step2_lvl2_v2_embed-and-index.drawio">step2_lvl2_v2_embed-and-index.drawio</a> |
+| Retrieve, generate, cite, stream, authorize (Level 2 step 3, v4) | The question and answer path: retrieval, reranking, generation, citations, and SSE streaming | <img src="c4-architecture/step3_lvl2_v4_retrieve-generate-stream.png" alt="Retrieve, generate, cite, stream, authorize" width="480"><br><a href="c4-architecture/step3_lvl2_v4_retrieve-generate-stream.drawio">step3_lvl2_v4_retrieve-generate-stream.drawio</a> |
+| Project walkthrough (PDF) | Hand-drawn flows and the project walkthrough used as drawing input | <a href="c4-architecture/project%201%20-%20rag%20knowledge%20assistant%20fo%20regulation%20docs-2026-11-14-19-06.pdf">project 1 - rag knowledge assistant fo regulation docs-2026-11-14-19-06.pdf</a> |
 
 ## Showcase
 
