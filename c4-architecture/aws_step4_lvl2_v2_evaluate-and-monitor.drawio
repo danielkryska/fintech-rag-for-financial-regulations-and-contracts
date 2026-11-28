@@ -95,7 +95,7 @@
           <mxGeometry x="140" y="1730" width="60" height="60" as="geometry" />
         </mxCell>
         <mxCell id="title" value="&lt;b style=&quot;font-size:14px&quot;&gt;Enterprise RAG knowledge assistant — Step 4: evaluate and monitor&lt;/b&gt;&lt;br&gt;AWS realisation of the C4 level-2 flow · v2 · 2026-11-28 · Draft&lt;br&gt;offline evaluation: CI workflow (GitHub Actions / GitLab CI) and nightly run · online evaluation: inline checks, sampled judge scoring, user signals, trend alerts&lt;br&gt;&lt;span style=&quot;color:#5A6C86&quot;&gt;solid arrow = synchronous call · dashed = event / scheduled trigger / notification · telemetry of the evaluation containers is not drawn (as in the C4)&lt;/span&gt;" style="text;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacing=0;overflow=hidden;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="560" y="20" width="900" height="56" as="geometry" />
+          <mxGeometry x="560" y="20" width="900" height="74" as="geometry" />
         </mxCell>
         <mxCell id="e-rev-con" value="Uses" style="rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;labelBackgroundColor=#ffffff;fontSize=11;exitX=0.0000;exitY=0.5000;exitPerimeter=0;entryX=0.0000;entryY=0.3333;entryPerimeter=0;" edge="1" parent="1" source="rev" target="con">
           <mxGeometry x="0.0163" relative="1" as="geometry">
