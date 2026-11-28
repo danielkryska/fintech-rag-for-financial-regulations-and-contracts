@@ -28,7 +28,7 @@ The architecture follows the C4 model. The table below is the drawing index — 
 | Document ingestion (Level 2 step 1, v9) | Upload, registration, hierarchical chunking, and the hand-off to embedding | <img src="c4-architecture/step1_lvl2_v9_document-ingestion.png" alt="Document ingestion" width="480"><br><a href="c4-architecture/step1_lvl2_v9_document-ingestion.drawio">step1_lvl2_v9_document-ingestion.drawio</a> |
 | Embed and index (Level 2 step 2, v4) | Event-driven embedding and index writes to the vector DB, keyword index, and chunk store | <img src="c4-architecture/step2_lvl2_v4_embed-and-index.png" alt="Embed and index" width="480"><br><a href="c4-architecture/step2_lvl2_v4_embed-and-index.drawio">step2_lvl2_v4_embed-and-index.drawio</a> |
 | Retrieve, generate, cite, stream, authorize (Level 2 step 3, v7) | The question and answer path: retrieval, reranking, generation, citations, and SSE streaming | <img src="c4-architecture/step3_lvl2_v7_retrieve-generate-stream.png" alt="Retrieve, generate, cite, stream, authorize" width="480"><br><a href="c4-architecture/step3_lvl2_v7_retrieve-generate-stream.drawio">step3_lvl2_v7_retrieve-generate-stream.drawio</a> |
-| Evaluate and monitor (Level 2 step 4, v2) | Evaluation loop: golden set, RAG triad metrics, CI regression gate, feedback, and monitoring | <img src="c4-architecture/step4_lvl2_v2_evaluate-and-monitor.png" alt="Evaluate and monitor" width="480"><br><a href="c4-architecture/step4_lvl2_v2_evaluate-and-monitor.drawio">step4_lvl2_v2_evaluate-and-monitor.drawio</a> |
+| Evaluate and monitor (Level 2 step 4, v3) | Evaluation loop: golden set, RAG triad metrics, CI regression gate, feedback, and monitoring | <img src="c4-architecture/step4_lvl2_v3_evaluate-and-monitor.png" alt="Evaluate and monitor" width="480"><br><a href="c4-architecture/step4_lvl2_v3_evaluate-and-monitor.drawio">step4_lvl2_v3_evaluate-and-monitor.drawio</a> |
 | Project walkthrough (PDF) | Hand-drawn flows and the project walkthrough used as drawing input | <a href="c4-architecture/project%201%20-%20rag%20knowledge%20assistant%20fo%20regulation%20docs-2026-11-14-19-06.pdf">project 1 - rag knowledge assistant fo regulation docs-2026-11-14-19-06.pdf</a> |
 
 ## Platform architecture
@@ -37,7 +37,12 @@ Platform-specific C4 Level 3 realisations, drawn after Levels 1 and 2 are confir
 
 ### AWS
 
-_To be added — AWS Level 3 drawings will be listed here._
+| Title | Description | Diagram |
+| --- | --- | --- |
+| Document ingestion (AWS step 1, v14) | AWS realisation of the document ingestion flow | <img src="c4-architecture/aws_step1_lvl2_v14_document-ingestion.png" alt="AWS document ingestion" width="480"><br><a href="c4-architecture/aws_step1_lvl2_v14_document-ingestion.drawio">aws_step1_lvl2_v14_document-ingestion.drawio</a> |
+| Embed and index (AWS step 2, v3) | AWS realisation of the embed and index flow | <img src="c4-architecture/aws_step2_lvl2_v3_embed-and-index.png" alt="AWS embed and index" width="480"><br><a href="c4-architecture/aws_step2_lvl2_v3_embed-and-index.drawio">aws_step2_lvl2_v3_embed-and-index.drawio</a> |
+| Retrieve, generate, cite, stream, authorize (AWS step 3, v5) | AWS realisation of the question and answer path | <img src="c4-architecture/aws_step3_lvl2_v5_retrieve-generate-stream.png" alt="AWS retrieve, generate, cite, stream, authorize" width="480"><br><a href="c4-architecture/aws_step3_lvl2_v5_retrieve-generate-stream.drawio">aws_step3_lvl2_v5_retrieve-generate-stream.drawio</a> |
+| Evaluate and monitor (AWS step 4, v2) | AWS realisation of the evaluation and monitoring loop | <img src="c4-architecture/aws_step4_lvl2_v2_evaluate-and-monitor.png" alt="AWS evaluate and monitor" width="480"><br><a href="c4-architecture/aws_step4_lvl2_v2_evaluate-and-monitor.drawio">aws_step4_lvl2_v2_evaluate-and-monitor.drawio</a> |
 
 ### Azure
 
