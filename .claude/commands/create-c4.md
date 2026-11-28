@@ -71,7 +71,7 @@ Propose the slice map before drawing. A typical map for this project:
 | Slice | Scope | Requirements | Repositories | Boundary interactions |
 | --- | --- | --- | --- | --- |
 
-The current map is three steps: step 1 document ingestion, step 2 embed and index, step 3 retrieve, generate, cite, stream, authorize. Split further only if a slice is too large to draw without crossings or too broad to review.
+The current map is four steps: step 1 document ingestion, step 2 embed and index, step 3 retrieve, generate, cite, stream, authorize, step 4 evaluate and monitor. Split further only if a slice is too large to draw without crossings or too broad to review.
 
 Ask the user to confirm the slice map. Then, for each slice:
 
@@ -103,7 +103,7 @@ Follow the XML skeleton below.
 ### File conventions
 
 - Drawings live in `c4-architecture/` — the only architecture drawing folder. There is no `ARCHITECTURE/` folder.
-- Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate). Level 3: `lvl3_v<K>_<technology>_<drawing_name>.drawio`, technology `aws`, `azure`, or `k8s`.
+- Level 1: `lvl1_v<K>_<drawing_name>.drawio`. Level 2: `step<K>_lvl2_v<N>_<drawing_name>.drawio`, where K is the slice step (1 = document ingestion, 2 = embed and index, 3 = retrieve and generate, 4 = evaluate and monitor). Level 3: `lvl3_v<K>_<technology>_<drawing_name>.drawio`, technology `aws`, `azure`, or `k8s`.
 - `<drawing_name>` is lowercase snake_case. One drawing per file, one `<diagram>` page per file.
 - The XML is the source of truth. A PNG is optional; never commit a PNG without its XML, and never claim a render that does not exist.
 - Versions are never overwritten once confirmed. A material change creates a new version file; the index marks the old row `Superseded by <file>`.

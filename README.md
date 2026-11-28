@@ -24,11 +24,28 @@ The architecture follows the C4 model. The table below is the drawing index — 
 
 | Title | Description | Diagram |
 | --- | --- | --- |
-| System context (Level 1, v3) | Who uses the assistant and which external systems it depends on | <img src="c4-architecture/lvl1_v3_system_context.png" alt="System context" width="480"><br><a href="c4-architecture/lvl1_v3_system_context.drawio">lvl1_v3_system_context.drawio</a> |
-| Document ingestion (Level 2 step 1, v7) | Upload, registration, hierarchical chunking, and the hand-off to embedding | <img src="c4-architecture/step1_lvl2_v7_document-ingestion.png" alt="Document ingestion" width="480"><br><a href="c4-architecture/step1_lvl2_v7_document-ingestion.drawio">step1_lvl2_v7_document-ingestion.drawio</a> |
-| Embed and index (Level 2 step 2, v3) | Event-driven embedding and index writes to the vector DB, keyword index, and chunk store | <img src="c4-architecture/step2_lvl2_v3_embed-and-index.png" alt="Embed and index" width="480"><br><a href="c4-architecture/step2_lvl2_v3_embed-and-index.drawio">step2_lvl2_v3_embed-and-index.drawio</a> |
-| Retrieve, generate, cite, stream, authorize (Level 2 step 3, v5) | The question and answer path: retrieval, reranking, generation, citations, and SSE streaming | <img src="c4-architecture/step3_lvl2_v5_retrieve-generate-stream.png" alt="Retrieve, generate, cite, stream, authorize" width="480"><br><a href="c4-architecture/step3_lvl2_v5_retrieve-generate-stream.drawio">step3_lvl2_v5_retrieve-generate-stream.drawio</a> |
+| System context (Level 1, v4) | Who uses the assistant and which external systems it depends on | <img src="c4-architecture/lvl1_v4_system_context.png" alt="System context" width="480"><br><a href="c4-architecture/lvl1_v4_system_context.drawio">lvl1_v4_system_context.drawio</a> |
+| Document ingestion (Level 2 step 1, v9) | Upload, registration, hierarchical chunking, and the hand-off to embedding | <img src="c4-architecture/step1_lvl2_v9_document-ingestion.png" alt="Document ingestion" width="480"><br><a href="c4-architecture/step1_lvl2_v9_document-ingestion.drawio">step1_lvl2_v9_document-ingestion.drawio</a> |
+| Embed and index (Level 2 step 2, v4) | Event-driven embedding and index writes to the vector DB, keyword index, and chunk store | <img src="c4-architecture/step2_lvl2_v4_embed-and-index.png" alt="Embed and index" width="480"><br><a href="c4-architecture/step2_lvl2_v4_embed-and-index.drawio">step2_lvl2_v4_embed-and-index.drawio</a> |
+| Retrieve, generate, cite, stream, authorize (Level 2 step 3, v7) | The question and answer path: retrieval, reranking, generation, citations, and SSE streaming | <img src="c4-architecture/step3_lvl2_v7_retrieve-generate-stream.png" alt="Retrieve, generate, cite, stream, authorize" width="480"><br><a href="c4-architecture/step3_lvl2_v7_retrieve-generate-stream.drawio">step3_lvl2_v7_retrieve-generate-stream.drawio</a> |
+| Evaluate and monitor (Level 2 step 4, v2) | Evaluation loop: golden set, RAG triad metrics, CI regression gate, feedback, and monitoring | <img src="c4-architecture/step4_lvl2_v2_evaluate-and-monitor.png" alt="Evaluate and monitor" width="480"><br><a href="c4-architecture/step4_lvl2_v2_evaluate-and-monitor.drawio">step4_lvl2_v2_evaluate-and-monitor.drawio</a> |
 | Project walkthrough (PDF) | Hand-drawn flows and the project walkthrough used as drawing input | <a href="c4-architecture/project%201%20-%20rag%20knowledge%20assistant%20fo%20regulation%20docs-2026-11-14-19-06.pdf">project 1 - rag knowledge assistant fo regulation docs-2026-11-14-19-06.pdf</a> |
+
+## Platform architecture
+
+Platform-specific C4 Level 3 realisations, drawn after Levels 1 and 2 are confirmed, one drawing per platform and slice. The drawing standard and the Level 3 completeness checklist live in [.claude/commands/create-c4.md](.claude/commands/create-c4.md).
+
+### AWS
+
+_To be added — AWS Level 3 drawings will be listed here._
+
+### Azure
+
+_To be added — Azure Level 3 drawings will be listed here._
+
+### Kubernetes
+
+_To be added — Kubernetes Level 3 drawings will be listed here._
 
 ## Showcase
 
